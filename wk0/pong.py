@@ -1,23 +1,9 @@
 import pygame as pg
 import random
 
-
-# Settings -----------------------------------------
-
-## Display
-
-FPS = 60
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
-VIRTUAL_WIDTH = 432
-VIRTUAL_HEIGHT = 243
-
-## Colours
-
-WHITE = (255, 255, 255)
-GREY = (40, 52, 55, 255)
-
-BACKGROUND_COLOUR = GREY
+from Ball import Ball
+from Paddle import Paddle
+from settings import *
 
 
 # Initialize Pygame -----------------------------------------
@@ -34,20 +20,20 @@ FONT = pg.font.Font("font.ttf", 36)
 SMALL_FONT = pg.font.Font("font.ttf", 8)
 SCORE_FONT = pg.font.Font("font.ttf", 32)
 
-## Game variables
-
-PADDLE_SPEED = 200
+## Game classes
 
 player1_score = 0
 player2_score = 0
 
-player1_y = 30
-player2_y = VIRTUAL_HEIGHT - 50
-
-ball_x = VIRTUAL_WIDTH // 2 - 2
-ball_y = VIRTUAL_HEIGHT // 2 - 2
-ball_dx = 100 if random.randint(0, 1) == 0 else -100
-ball_dy = random.randint(-50, 50)
+player1 = Paddle(PADDLE_MARGIN_X, PADDLE_MARGIN_Y)
+player2 = Paddle(
+    VIRTUAL_WIDTH - PADDLE_MARGIN_X - PADDLE_WIDTH,
+    VIRTUAL_HEIGHT - PADDLE_MARGIN_Y - PADDLE_HEIGHT
+)
+ball = Ball(
+    VIRTUAL_WIDTH // 2 - BALL_SIZE // 2,
+    VIRTUAL_HEIGHT // 2 - BALL_SIZE // 2
+)
 
 game_state = "start"
 
@@ -75,30 +61,25 @@ while running:
 
     if game_state == "play":
         if keys[pg.K_s]:
-            player1_y += PADDLE_SPEED * dt
+            player1.update(1, dt)
         if keys[pg.K_w]:
-            player1_y -= PADDLE_SPEED * dt
+            player1.update(-1, dt)
         if keys[pg.K_DOWN]:
-            player2_y += PADDLE_SPEED * dt
+            player2.update(1, dt)
         if keys[pg.K_UP]:
-            player2_y -= PADDLE_SPEED * dt
+            player2.update(-1, dt)
 
-        ball_x += ball_dx * dt
-        ball_y += ball_dy * dt
-
-    ## Keep the paddles on screen
-    player1_y = max(0, min(VIRTUAL_HEIGHT - 20, player1_y))
-    player2_y = max(0, min(VIRTUAL_HEIGHT - 20, player2_y))
+        ball.update(dt)
 
     # Rendering
     game_surface.fill(BACKGROUND_COLOUR)
 
     ## Paddles
-    pg.draw.rect(game_surface, WHITE, (10, player1_y, 5, 20))
-    pg.draw.rect(game_surface, WHITE, (VIRTUAL_WIDTH - 10, player2_y, 5, 20))
-    
+    player1.render(game_surface)
+    player2.render(game_surface)
+
     ## Ball
-    pg.draw.rect(game_surface, WHITE, (ball_x, ball_y, 4, 4))
+    ball.render(game_surface)
 
     ## Title
     text = SMALL_FONT.render("Hello Pong!", False, WHITE)
