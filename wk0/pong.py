@@ -14,6 +14,9 @@ VIRTUAL_HEIGHT = 243
 ## Colours
 
 WHITE = (255, 255, 255)
+GREY = (40, 52, 55, 255)
+
+BACKGROUND_COLOUR = GREY
 
 
 # Initialize Pygame -----------------------------------------
@@ -26,7 +29,8 @@ running = True
 
 ## Fonts
 
-FONT = pg.font.Font(None, 36)
+FONT = pg.font.Font("font.ttf", 36)
+SMALL_FONT = pg.font.Font("font.ttf", 8)
 
 
 # Main game loop -----------------------------------------
@@ -43,10 +47,14 @@ while running:
                 running = False
 
     # Rendering
-    game_surface.fill((0, 0, 0))
+    game_surface.fill(BACKGROUND_COLOUR)
 
-    text = FONT.render("Hello Pong!", False, WHITE)
-    game_surface.blit(text, (VIRTUAL_WIDTH // 2 - text.get_width() // 2, VIRTUAL_HEIGHT // 2 - text.get_height() // 2))
+    pg.draw.rect(game_surface, WHITE, (10, 30, 5, 20))
+    pg.draw.rect(game_surface, WHITE, (VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 50, 5, 20))
+    pg.draw.rect(game_surface, WHITE, (VIRTUAL_WIDTH // 2 - 2, VIRTUAL_HEIGHT // 2 - 2, 4, 4))
+
+    text = SMALL_FONT.render("Hello Pong!", False, WHITE)
+    game_surface.blit(text, (VIRTUAL_WIDTH // 2 - text.get_width() // 2, 0))
 
     # Scale the game surface to fit the window
     scaled = pg.transform.scale(game_surface, screen.get_size())
