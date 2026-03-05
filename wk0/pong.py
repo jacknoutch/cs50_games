@@ -1,20 +1,36 @@
 import pygame as pg
 
-# Settings
+
+# Settings -----------------------------------------
+
+## Display
+
 FPS = 60
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
+VIRTUAL_WIDTH = 432
+VIRTUAL_HEIGHT = 243
+
+## Colours
+
 WHITE = (255, 255, 255)
 
 
-# Initialize Pygame
+# Initialize Pygame -----------------------------------------
+
 pg.init()
 screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+game_surface = pg.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
 clock = pg.time.Clock()
 running = True
 
+## Fonts
 
-# Main game loop
+FONT = pg.font.Font(None, 36)
+
+
+# Main game loop -----------------------------------------
+
 while running:
 
     # Handle events
@@ -22,12 +38,19 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    # Rendering
-    screen.fill((0, 0, 0))
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                running = False
 
-    font = pg.font.Font(None, 36)
-    text = font.render("Hello Pong!", True, WHITE)
-    screen.blit(text, (WINDOW_WIDTH // 2 - text.get_width() // 2, WINDOW_HEIGHT // 2 - text.get_height() // 2))
+    # Rendering
+    game_surface.fill((0, 0, 0))
+
+    text = FONT.render("Hello Pong!", False, WHITE)
+    game_surface.blit(text, (VIRTUAL_WIDTH // 2 - text.get_width() // 2, VIRTUAL_HEIGHT // 2 - text.get_height() // 2))
+
+    # Scale the game surface to fit the window
+    scaled = pg.transform.scale(game_surface, screen.get_size())
+    screen.blit(scaled, (0, 0))
 
     pg.display.flip()
 
