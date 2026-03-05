@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 
 
 # Settings -----------------------------------------
@@ -35,14 +36,20 @@ SCORE_FONT = pg.font.Font("font.ttf", 32)
 
 ## Game variables
 
+PADDLE_SPEED = 200
+
 player1_score = 0
 player2_score = 0
 
 player1_y = 30
 player2_y = VIRTUAL_HEIGHT - 50
 
-PADDLE_SPEED = 200
+ball_x = VIRTUAL_WIDTH // 2 - 2
+ball_y = VIRTUAL_HEIGHT // 2 - 2
+ball_dx = 100 if random.randint(0, 1) == 0 else -100
+ball_dy = random.randint(-50, 50)
 
+game_state = "start"
 
 # Main game loop -----------------------------------------
 
@@ -60,16 +67,28 @@ while running:
             if event.key == pg.K_ESCAPE:
                 running = False
 
+            if event.key == pg.K_RETURN:
+                if game_state == "start":
+                    game_state = "play"
+
     keys = pg.key.get_pressed()
-    
-    if keys[pg.K_s]:
-        player1_y += PADDLE_SPEED * dt
-    if keys[pg.K_w]:
-        player1_y -= PADDLE_SPEED * dt
-    if keys[pg.K_DOWN]:
-        player2_y += PADDLE_SPEED * dt
-    if keys[pg.K_UP]:
-        player2_y -= PADDLE_SPEED * dt
+
+    if game_state == "play":
+        if keys[pg.K_s]:
+            player1_y += PADDLE_SPEED * dt
+        if keys[pg.K_w]:
+            player1_y -= PADDLE_SPEED * dt
+        if keys[pg.K_DOWN]:
+            player2_y += PADDLE_SPEED * dt
+        if keys[pg.K_UP]:
+            player2_y -= PADDLE_SPEED * dt
+
+        ball_x += ball_dx * dt
+        ball_y += ball_dy * dt
+
+    ## Keep the paddles on screen
+    player1_y = max(0, min(VIRTUAL_HEIGHT - 20, player1_y))
+    player2_y = max(0, min(VIRTUAL_HEIGHT - 20, player2_y))
 
     # Rendering
     game_surface.fill(BACKGROUND_COLOUR)
@@ -79,7 +98,7 @@ while running:
     pg.draw.rect(game_surface, WHITE, (VIRTUAL_WIDTH - 10, player2_y, 5, 20))
     
     ## Ball
-    pg.draw.rect(game_surface, WHITE, (VIRTUAL_WIDTH // 2 - 2, VIRTUAL_HEIGHT // 2 - 2, 4, 4))
+    pg.draw.rect(game_surface, WHITE, (ball_x, ball_y, 4, 4))
 
     ## Title
     text = SMALL_FONT.render("Hello Pong!", False, WHITE)
