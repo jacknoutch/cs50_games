@@ -20,6 +20,12 @@ FONT = pg.font.Font("font.ttf", 36)
 SMALL_FONT = pg.font.Font("font.ttf", 8)
 SCORE_FONT = pg.font.Font("font.ttf", 32)
 
+## Sounds
+
+PADDLE_HIT = pg.mixer.Sound("sounds/paddle_hit.wav")
+SCORE = pg.mixer.Sound("sounds/score.wav")
+WALL_HIT = pg.mixer.Sound("sounds/wall_hit.wav")
+
 ## Game classes
 
 player1_score = 0
@@ -108,6 +114,7 @@ while running:
     ## Ball collision
 
     if ball.collides(player1):
+        PADDLE_HIT.play()
         ball.dx *= -1.03
         ball.x = player1.x + player1.width
 
@@ -117,6 +124,7 @@ while running:
             ball.dy = random.randint(10, 150)
 
     elif ball.collides(player2):
+        PADDLE_HIT.play()
         ball.dx *= -1.03
         ball.x = player2.x - ball.width
 
@@ -126,16 +134,19 @@ while running:
             ball.dy = random.randint(10, 150)
 
     if ball.y <= 0:
+        WALL_HIT.play()
         ball.y = 0
         ball.dy *= -1
 
     elif ball.y >= VIRTUAL_HEIGHT - ball.height:
+        WALL_HIT.play()
         ball.y = VIRTUAL_HEIGHT - ball.height
         ball.dy *= -1
 
     ## Scoring and winning
 
     if ball.x <= 0 and game_state == "play":
+        SCORE.play()
         serving_player = 1
         player2_score += 1
 
@@ -147,6 +158,7 @@ while running:
             game_state = "serve"
 
     elif ball.x >= VIRTUAL_WIDTH - ball.width and game_state == "play":
+        SCORE.play()
         serving_player = 2
         player1_score += 1
 
