@@ -20,6 +20,15 @@ FONT = pg.font.Font("font.ttf", 36)
 SMALL_FONT = pg.font.Font("font.ttf", 8)
 SCORE_FONT = pg.font.Font("font.ttf", 32)
 
+## Text
+
+game_text = {
+    "welcome": "Welcome to Pong!",
+    "instructions": "Press Enter to begin",
+    "single_player": "Single Player",
+    "two_player": "Two Player",
+}
+
 ## Sounds
 
 PADDLE_HIT = pg.mixer.Sound("sounds/paddle_hit.wav")
@@ -31,7 +40,7 @@ WALL_HIT = pg.mixer.Sound("sounds/wall_hit.wav")
 player1_score = 0
 player2_score = 0
 
-player1 = Paddle(PADDLE_MARGIN_X, PADDLE_MARGIN_Y, AI_SPEED)
+player1 = Paddle(PADDLE_MARGIN_X, PADDLE_MARGIN_Y)
 player2 = Paddle(
     VIRTUAL_WIDTH - PADDLE_MARGIN_X - PADDLE_WIDTH,
     VIRTUAL_HEIGHT - PADDLE_MARGIN_Y - PADDLE_HEIGHT
@@ -42,6 +51,8 @@ ball = Ball(
 )
 
 game_state = "start"
+
+player_selection = game_text["single_player"]
 
 serving_player = 1
 
@@ -78,9 +89,18 @@ while running:
             if event.key == pg.K_ESCAPE:
                 running = False
 
+            if event.key == pg.K_DOWN or event.key == pg.K_UP:
+                if game_state == "start":
+                    if player_selection == game_text["single_player"]:
+                        player_selection = game_text["two_player"]
+                    else:
+                        player_selection = game_text["single_player"]
+
             if event.key == pg.K_RETURN:
                 if game_state == "start":
                     game_state = "serve"
+                    if player_selection == game_text["single_player"]:
+                        player1.dy = AI_SPEED
                 elif game_state == "serve":
                     game_state = "play"
                 elif game_state == "done":
@@ -103,14 +123,16 @@ while running:
             ball.dx = -random.randint(140,200)
 
     elif game_state == "play":
-        # if keys[pg.K_s]:
-        #     player1.update(1, dt)
-        # if keys[pg.K_w]:
-        #     player1.update(-1, dt)
-        if ball.x < VIRTUAL_WIDTH // 2 - PADDLE_MARGIN_X:
-            if ball.y < player1.y or ball.y > player1.y + player1.height - ball.height:
-                direction = 1 if ball.y > player1.y else -1
-                player1.update(direction, dt)
+        if player_selection == game_text["single_player"]:
+            if ball.x < VIRTUAL_WIDTH // 2 - PADDLE_MARGIN_X:
+                if ball.y < player1.y or ball.y > player1.y + player1.height - ball.height:
+                    direction = 1 if ball.y > player1.y else -1
+                    player1.update(direction, dt)
+        elif player_selection == game_text["two_player"]:
+            if keys[pg.K_s]:
+                player1.update(1, dt)
+            if keys[pg.K_w]:
+                player1.update(-1, dt)
         if keys[pg.K_DOWN]:
             player2.update(1, dt)
         if keys[pg.K_UP]:
@@ -188,10 +210,14 @@ while running:
     ball.render(game_surface)
 
     if game_state == "start":
-        text1 = SMALL_FONT.render("Welcome to Pong!", False, WHITE)
-        text2 = SMALL_FONT.render("Press Enter to begin", False, WHITE)
-        game_surface.blit(text1, (VIRTUAL_WIDTH // 2 - text1.get_width() // 2, 0))
-        game_surface.blit(text2, (VIRTUAL_WIDTH // 2 - text2.get_width() // 2, 20))
+        for i, (key, text) in enumerate(game_text.items()):
+            if text == player_selection:
+                SMALL_FONT.set_underline(True)
+            text_surface = SMALL_FONT.render(text, False, WHITE)
+            if text == player_selection:
+                SMALL_FONT.set_underline(False)
+            game_surface.blit(text_surface, (VIRTUAL_WIDTH // 2 - text_surface.get_width() // 2, i * 20))
+
 
     elif game_state == "serve":
         text1 = SMALL_FONT.render(f"Player {serving_player}'s serve", False, WHITE)
