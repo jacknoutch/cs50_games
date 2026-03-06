@@ -3,12 +3,12 @@ import pygame as pg
 from settings import *
 
 class Paddle:
-    def __init__(self, x, y, width=PADDLE_WIDTH, height=PADDLE_HEIGHT):
+    def __init__(self, x, y, speed=PADDLE_SPEED, width=PADDLE_WIDTH, height=PADDLE_HEIGHT):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.dy = PADDLE_SPEED
+        self.dy = speed
 
     def update(self, direction=1, dt=0):
         self.y += self.dy * direction * dt

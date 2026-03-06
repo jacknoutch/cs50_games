@@ -31,7 +31,7 @@ WALL_HIT = pg.mixer.Sound("sounds/wall_hit.wav")
 player1_score = 0
 player2_score = 0
 
-player1 = Paddle(PADDLE_MARGIN_X, PADDLE_MARGIN_Y)
+player1 = Paddle(PADDLE_MARGIN_X, PADDLE_MARGIN_Y, AI_SPEED)
 player2 = Paddle(
     VIRTUAL_WIDTH - PADDLE_MARGIN_X - PADDLE_WIDTH,
     VIRTUAL_HEIGHT - PADDLE_MARGIN_Y - PADDLE_HEIGHT
@@ -103,10 +103,14 @@ while running:
             ball.dx = -random.randint(140,200)
 
     elif game_state == "play":
-        if keys[pg.K_s]:
-            player1.update(1, dt)
-        if keys[pg.K_w]:
-            player1.update(-1, dt)
+        # if keys[pg.K_s]:
+        #     player1.update(1, dt)
+        # if keys[pg.K_w]:
+        #     player1.update(-1, dt)
+        if ball.x < VIRTUAL_WIDTH // 2 - PADDLE_MARGIN_X:
+            if ball.y < player1.y or ball.y > player1.y + player1.height - ball.height:
+                direction = 1 if ball.y > player1.y else -1
+                player1.update(direction, dt)
         if keys[pg.K_DOWN]:
             player2.update(1, dt)
         if keys[pg.K_UP]:
