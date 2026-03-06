@@ -9,7 +9,7 @@ from settings import *
 # Initialize Pygame -----------------------------------------
 
 pg.init()
-screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pg.RESIZABLE)
 game_surface = pg.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
 clock = pg.time.Clock()
 running = True
@@ -70,6 +70,9 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
+
+        if event.type == pg.VIDEORESIZE:
+            screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
@@ -208,8 +211,13 @@ while running:
     display_FPS(game_surface)
 
     # Scale the game surface to fit the window
-    scaled = pg.transform.scale(game_surface, screen.get_size())
-    screen.blit(scaled, (0, 0))
+    window_width, window_height = screen.get_size()
+    scale = min(window_width / VIRTUAL_WIDTH, window_height / VIRTUAL_HEIGHT)
+    scaled_width, scaled_height = int(VIRTUAL_WIDTH * scale), int(VIRTUAL_HEIGHT * scale)
+    scaled = pg.transform.scale(game_surface, (scaled_width, scaled_height))
+    screen_x = (window_width - scaled_width) // 2
+    screen_y = (window_height - scaled_height) // 2
+    screen.blit(scaled, (screen_x, screen_y))
 
     pg.display.flip()
 
