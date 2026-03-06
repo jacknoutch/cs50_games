@@ -10,6 +10,13 @@ VIRTUAL_HEIGHT = 288
 
 FPS = 60
 
+## IMAGE PATHS
+
+BIRD_IMAGE = "assets/bird.png"
+PIPE_IMAGE = "assets/pipe.png"
+BACKGROUND_IMAGE = "assets/background.png"
+GROUND_IMAGE = "assets/ground.png"
+
 ## PARALLAX
 
 BACKGROUND_LOOPING_X = 413
@@ -19,3 +26,4 @@ GROUND_SCROLL_SPEED = 60
 ## GAMEPLAY
 
 GRAVITY = 20
+PIPE_SPAWN_INTERVAL = 2

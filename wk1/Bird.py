@@ -1,11 +1,11 @@
 import pygame as pg
 
-from settings import GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+from settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Bird:
 
-    def __init__(self):
-        self.image = pg.image.load("assets/bird.png").convert()
+    def __init__(self, image_path=BIRD_IMAGE):
+        self.image = pg.image.load(image_path).convert()
         self.rect = self.image.get_rect()
         self.dy = 0
 

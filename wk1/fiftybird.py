@@ -1,6 +1,7 @@
 import pygame as pg
 
 from Bird import Bird
+from Pipe import Pipe
 from settings import *
 from utils import compute_letterbox
 
@@ -16,12 +17,12 @@ game_surface = pg.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
 
 clock = pg.time.Clock()
 
+spawn_timer = 0
+
 ## Images
 
-bird_image = pg.image.load("assets/bird.png").convert()
-
-background_image = pg.image.load("assets/background.png").convert()
-ground_image = pg.image.load("assets/ground.png").convert()
+background_image = pg.image.load(BACKGROUND_IMAGE).convert()
+ground_image = pg.image.load(GROUND_IMAGE).convert()
 
 background_scroll = 0
 ground_scroll = 0
@@ -30,11 +31,16 @@ ground_scroll = 0
 
 bird = Bird()
 
+pipes = [
+    Pipe()
+]
+
 running = True
 
 while running:
 
     dt = clock.tick(FPS) / 1000
+    spawn_timer += dt
 
     # EVENTS
 
@@ -52,6 +58,16 @@ while running:
 
     bird.update(dt, keys_pressed)
 
+    if spawn_timer >= PIPE_SPAWN_INTERVAL:
+        pipes.append(Pipe())
+        spawn_timer = 0
+
+    for pipe in pipes:
+        pipe.update(dt)
+
+        if pipe.rect.right < 0:
+            pipes.remove(pipe)
+
     background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
     ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
@@ -61,6 +77,9 @@ while running:
     game_surface.blit(ground_image, (-ground_scroll, VIRTUAL_HEIGHT - ground_image.get_height()))
 
     bird.render(game_surface)
+
+    for pipe in pipes:
+        pipe.render(game_surface)
 
     # Scale the game surface to fit the window
     scale, scaled_xy, offset = compute_letterbox(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, screen)
