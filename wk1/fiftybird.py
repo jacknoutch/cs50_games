@@ -48,6 +48,10 @@ while running:
 
     # LOGIC
 
+    keys_pressed = pg.key.get_just_pressed()
+
+    bird.update(dt, keys_pressed)
+
     background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
     ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
