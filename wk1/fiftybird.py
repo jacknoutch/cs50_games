@@ -1,5 +1,6 @@
 import pygame as pg
 
+from Bird import Bird
 from settings import *
 from utils import compute_letterbox
 
@@ -17,11 +18,17 @@ clock = pg.time.Clock()
 
 ## Images
 
+bird_image = pg.image.load("assets/bird.png").convert()
+
 background_image = pg.image.load("assets/background.png").convert()
 ground_image = pg.image.load("assets/ground.png").convert()
 
 background_scroll = 0
 ground_scroll = 0
+
+## Game objects
+
+bird = Bird()
 
 running = True
 
@@ -48,6 +55,8 @@ while running:
 
     game_surface.blit(background_image, (-background_scroll, 0))
     game_surface.blit(ground_image, (-ground_scroll, VIRTUAL_HEIGHT - ground_image.get_height()))
+
+    bird.render(game_surface)
 
     # Scale the game surface to fit the window
     scale, scaled_xy, offset = compute_letterbox(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, screen)
