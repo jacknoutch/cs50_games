@@ -37,6 +37,15 @@ ball = Ball(
 
 game_state = "start"
 
+
+## Functions
+
+def display_FPS(surface):
+    fps = int(clock.get_fps())
+    text = SMALL_FONT.render(f"FPS: {fps}", False, WHITE)
+    surface.blit(text, (10, 10))
+
+
 # Main game loop -----------------------------------------
 
 while running:
@@ -90,6 +99,9 @@ while running:
     score2 = SCORE_FONT.render(str(player2_score), False, WHITE)
     game_surface.blit(score1, (VIRTUAL_WIDTH // 2 - 50, VIRTUAL_HEIGHT // 3))
     game_surface.blit(score2, (VIRTUAL_WIDTH // 2 + 30, VIRTUAL_HEIGHT // 3))
+
+    # FPS
+    display_FPS(game_surface)
 
     # Scale the game surface to fit the window
     scaled = pg.transform.scale(game_surface, screen.get_size())
