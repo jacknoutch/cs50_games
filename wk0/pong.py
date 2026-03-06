@@ -111,6 +111,18 @@ while running:
         ball.y = VIRTUAL_HEIGHT - ball.height
         ball.dy *= -1
 
+    if ball.x <= 0:
+        serving_player = 1
+        player2_score += 1
+        ball.reset()
+        game_state = "start"
+
+    elif ball.x >= VIRTUAL_WIDTH - ball.width:
+        serving_player = 2
+        player1_score += 1
+        ball.reset()
+        game_state = "start"
+
     # Rendering
     game_surface.fill(BACKGROUND_COLOUR)
 
