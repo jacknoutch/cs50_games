@@ -39,6 +39,8 @@ game_state = "start"
 
 serving_player = 1
 
+winning_player = None
+
 
 ## Functions
 
@@ -72,6 +74,15 @@ while running:
                     game_state = "serve"
                 elif game_state == "serve":
                     game_state = "play"
+                elif game_state == "done":
+                    game_state = "serve"
+                    ball.reset()
+                    player1_score = 0
+                    player2_score = 0
+                    if winning_player == 1:
+                        serving_player = 2
+                    elif winning_player == 2:
+                        serving_player = 1
 
     keys = pg.key.get_pressed()
 
@@ -122,17 +133,30 @@ while running:
         ball.y = VIRTUAL_HEIGHT - ball.height
         ball.dy *= -1
 
-    if ball.x <= 0:
+    ## Scoring and winning
+
+    if ball.x <= 0 and game_state == "play":
         serving_player = 1
         player2_score += 1
-        ball.reset()
-        game_state = "serve"
 
-    elif ball.x >= VIRTUAL_WIDTH - ball.width:
+        if player2_score >= WINNING_SCORE:
+            winning_player = 2
+            game_state = "done"
+        else:
+            ball.reset()
+            game_state = "serve"
+
+    elif ball.x >= VIRTUAL_WIDTH - ball.width and game_state == "play":
         serving_player = 2
         player1_score += 1
-        ball.reset()
-        game_state = "serve"
+
+        if player1_score >= WINNING_SCORE:
+            winning_player = 1
+            game_state = "done"
+        else:
+            ball.reset()
+            game_state = "serve"
+
 
     # Rendering
     game_surface.fill(BACKGROUND_COLOUR)
@@ -144,9 +168,23 @@ while running:
     ## Ball
     ball.render(game_surface)
 
-    ## Title
-    text = SMALL_FONT.render("Hello Pong!", False, WHITE)
-    game_surface.blit(text, (VIRTUAL_WIDTH // 2 - text.get_width() // 2, 0))
+    if game_state == "start":
+        text1 = SMALL_FONT.render("Welcome to Pong!", False, WHITE)
+        text2 = SMALL_FONT.render("Press Enter to begin", False, WHITE)
+        game_surface.blit(text1, (VIRTUAL_WIDTH // 2 - text1.get_width() // 2, 0))
+        game_surface.blit(text2, (VIRTUAL_WIDTH // 2 - text2.get_width() // 2, 20))
+
+    elif game_state == "serve":
+        text1 = SMALL_FONT.render(f"Player {serving_player}'s serve", False, WHITE)
+        text2 = SMALL_FONT.render("Press Enter to serve", False, WHITE)
+        game_surface.blit(text1, (VIRTUAL_WIDTH // 2 - text1.get_width() // 2, 0))
+        game_surface.blit(text2, (VIRTUAL_WIDTH // 2 - text2.get_width() // 2, 20))
+
+    elif game_state == "done":
+        text1 = SMALL_FONT.render(f"Player {winning_player} wins!", False, WHITE)
+        text2 = SMALL_FONT.render("Press Enter to restart", False, WHITE)
+        game_surface.blit(text1, (VIRTUAL_WIDTH // 2 - text1.get_width() // 2, 0))
+        game_surface.blit(text2, (VIRTUAL_WIDTH // 2 - text2.get_width() // 2, 20))
 
     ## Score
     score1 = SCORE_FONT.render(str(player1_score), False, WHITE)
