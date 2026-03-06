@@ -1,7 +1,7 @@
 import pygame as pg
 
-from Pipe import Pipe
-from settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+from wk1.Pipe import Pipe
+from wk1.settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Bird:
 

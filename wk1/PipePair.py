@@ -1,7 +1,7 @@
 import pygame as pg
 
-from settings import PIPE_GAP, PIPE_HEIGHT, PIPE_SCROLL_SPEED, PIPE_WIDTH, VIRTUAL_WIDTH
-from Pipe import Pipe
+from wk1.settings import PIPE_GAP, PIPE_HEIGHT, PIPE_SCROLL_SPEED, PIPE_WIDTH, VIRTUAL_WIDTH
+from wk1.Pipe import Pipe
 
 class PipePair:
     def __init__(self, x:int = VIRTUAL_WIDTH + 32, y:int = 0):

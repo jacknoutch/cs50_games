@@ -12,10 +12,10 @@ FPS = 60
 
 ## IMAGE PATHS
 
-BIRD_IMAGE = "assets/bird.png"
-PIPE_IMAGE = "assets/pipe.png"
-BACKGROUND_IMAGE = "assets/background.png"
-GROUND_IMAGE = "assets/ground.png"
+BIRD_IMAGE = "wk1/assets/bird.png"
+PIPE_IMAGE = "wk1/assets/pipe.png"
+BACKGROUND_IMAGE = "wk1/assets/background.png"
+GROUND_IMAGE = "wk1/assets/ground.png"
 
 ## PARALLAX
 

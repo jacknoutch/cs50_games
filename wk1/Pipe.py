@@ -1,7 +1,7 @@
 import pygame as pg
 import random
 
-from settings import PIPE_HEIGHT, PIPE_IMAGE, PIPE_SCROLL_SPEED, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+from wk1.settings import PIPE_HEIGHT, PIPE_IMAGE, PIPE_SCROLL_SPEED, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Pipe:
     def __init__(self, orientation, y, image_path=PIPE_IMAGE):
