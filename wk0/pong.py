@@ -10,6 +10,7 @@ from settings import *
 
 pg.init()
 screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pg.RESIZABLE)
+pg.display.set_caption("Pong")
 game_surface = pg.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
 clock = pg.time.Clock()
 running = True
