@@ -37,6 +37,8 @@ ball = Ball(
 
 game_state = "start"
 
+serving_player = 1
+
 
 ## Functions
 
@@ -67,11 +69,20 @@ while running:
 
             if event.key == pg.K_RETURN:
                 if game_state == "start":
+                    game_state = "serve"
+                elif game_state == "serve":
                     game_state = "play"
 
     keys = pg.key.get_pressed()
 
-    if game_state == "play":
+    if game_state == "serve":
+        ball.dy = random.randint(-50, 50)
+        if serving_player == 1:
+            ball.dx = random.randint(140,200)
+        elif serving_player == 2:
+            ball.dx = -random.randint(140,200)
+
+    elif game_state == "play":
         if keys[pg.K_s]:
             player1.update(1, dt)
         if keys[pg.K_w]:
@@ -115,13 +126,13 @@ while running:
         serving_player = 1
         player2_score += 1
         ball.reset()
-        game_state = "start"
+        game_state = "serve"
 
     elif ball.x >= VIRTUAL_WIDTH - ball.width:
         serving_player = 2
         player1_score += 1
         ball.reset()
-        game_state = "start"
+        game_state = "serve"
 
     # Rendering
     game_surface.fill(BACKGROUND_COLOUR)
