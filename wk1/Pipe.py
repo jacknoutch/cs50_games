@@ -1,25 +1,27 @@
 import pygame as pg
 import random
 
-from settings import PIPE_IMAGE, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
-
-
-pipe_scroll = -60
+from settings import PIPE_HEIGHT, PIPE_IMAGE, PIPE_SCROLL_SPEED, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Pipe:
-    def __init__(self, image_path=PIPE_IMAGE):
+    def __init__(self, orientation, y, image_path=PIPE_IMAGE):
+        self.orientation = orientation
+        
+        # load image
         self.image = pg.image.load(image_path).convert()
-        self.x = float(VIRTUAL_WIDTH) # Needed for smooth movement because rect stores integer coordinates 
+
+        # flip the image if top
+        if self.orientation == "top":
+            self.image = pg.transform.flip(self.image, False, True)
+        
+        # create the rect with provided y 
         self.rect = self.image.get_rect()
+        self.rect.topleft = (VIRTUAL_WIDTH, y)
 
-        self.rect.topleft = (
-            VIRTUAL_WIDTH,
-            random.randint(VIRTUAL_HEIGHT // 4, VIRTUAL_HEIGHT - 30)
-        )
-
-    def update(self, dt: float):
-        self.x += pipe_scroll * dt
-        self.rect.x = int(self.x) # Setting rect.x directly would result in jittery movement
+        # keep a float x for smooth sub-pixel movement
+        self.x = float(self.rect.x)
+        self.y = self.rect.y
 
     def render(self, surface: pg.Surface):
+        self.rect.x = int(self.x)
         surface.blit(self.image, self.rect.topleft)
