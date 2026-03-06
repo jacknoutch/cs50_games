@@ -20,6 +20,9 @@ clock = pg.time.Clock()
 background_image = pg.image.load("assets/background.png").convert()
 ground_image = pg.image.load("assets/ground.png").convert()
 
+background_scroll = 0
+ground_scroll = 0
+
 running = True
 
 while running:
@@ -36,10 +39,15 @@ while running:
             if event.key == pg.K_ESCAPE:
                 running = False
 
+    # LOGIC
+
+    background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
+    ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+
     # RENDERING
 
-    game_surface.blit(background_image, (0, 0))
-    game_surface.blit(ground_image, (0, VIRTUAL_HEIGHT - ground_image.get_height()))
+    game_surface.blit(background_image, (-background_scroll, 0))
+    game_surface.blit(ground_image, (-ground_scroll, VIRTUAL_HEIGHT - ground_image.get_height()))
 
     # Scale the game surface to fit the window
     scale, scaled_xy, offset = compute_letterbox(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, screen)
