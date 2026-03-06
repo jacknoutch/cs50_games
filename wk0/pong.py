@@ -50,10 +50,13 @@ def display_FPS(surface):
 
 while running:
 
+
     # Cap the frame rate
     dt = clock.tick(FPS) / 1000
 
+
     # Handle events
+
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
@@ -79,6 +82,34 @@ while running:
             player2.update(-1, dt)
 
         ball.update(dt)
+
+    ## Ball collision
+
+    if ball.collides(player1):
+        ball.dx *= -1.03
+        ball.x = player1.x + player1.width
+
+        if ball.dy < 0:
+            ball.dy = -random.randint(10, 150)
+        else:
+            ball.dy = random.randint(10, 150)
+
+    elif ball.collides(player2):
+        ball.dx *= -1.03
+        ball.x = player2.x - ball.width
+
+        if ball.dy < 0:
+            ball.dy = -random.randint(10, 150)
+        else:
+            ball.dy = random.randint(10, 150)
+
+    if ball.y <= 0:
+        ball.y = 0
+        ball.dy *= -1
+
+    elif ball.y >= VIRTUAL_HEIGHT - ball.height:
+        ball.y = VIRTUAL_HEIGHT - ball.height
+        ball.dy *= -1
 
     # Rendering
     game_surface.fill(BACKGROUND_COLOUR)
@@ -108,5 +139,6 @@ while running:
     screen.blit(scaled, (0, 0))
 
     pg.display.flip()
+
 
 pg.quit()

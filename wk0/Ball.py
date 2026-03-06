@@ -16,9 +16,6 @@ class Ball:
         self.x += self.dx * dt
         self.y += self.dy * dt
 
-        if self.y <= 0 or self.y >= VIRTUAL_HEIGHT - self.height:
-            self.dy *= -1
-
     def render(self, surface):
         pg.draw.rect(surface, WHITE, (self.x, self.y, self.width, self.height))
 
