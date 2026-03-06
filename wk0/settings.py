@@ -1,0 +1,25 @@
+# Settings -----------------------------------------
+
+## Display
+
+FPS = 60
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+VIRTUAL_WIDTH = 432
+VIRTUAL_HEIGHT = 243
+
+## Colours
+
+WHITE = (255, 255, 255)
+GREY = (40, 52, 55, 255)
+
+BACKGROUND_COLOUR = GREY
+
+## Game settings
+
+PADDLE_SPEED = 200
+PADDLE_WIDTH = 5
+PADDLE_HEIGHT = 20
+PADDLE_MARGIN_X = 10
+PADDLE_MARGIN_Y = 30
+BALL_SIZE = 4
