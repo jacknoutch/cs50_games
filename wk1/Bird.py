@@ -1,5 +1,6 @@
 import pygame as pg
 
+from Pipe import Pipe
 from settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Bird:
@@ -32,3 +33,9 @@ class Bird:
         Make the bird jump by applying an upward velocity.
         """
         self.dy = -300 * dt
+
+    def collides(self, pipe: Pipe):
+        """
+        Check if the bird collides with a pipe.
+        """
+        return self.rect.colliderect(pipe.rect)

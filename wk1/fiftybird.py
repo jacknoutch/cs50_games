@@ -39,6 +39,8 @@ pipe_pairs = [
     pipe_pair := PipePair(y=previous_pipe_y),
 ]
 
+scrolling = True
+
 running = True
 
 while running:
@@ -58,24 +60,30 @@ while running:
 
     # LOGIC
 
-    keys_pressed = pg.key.get_just_pressed()
+    if scrolling:
 
-    bird.update(dt, keys_pressed)
+        keys_pressed = pg.key.get_just_pressed()
 
-    if spawn_timer >= PIPE_SPAWN_INTERVAL:
-        y = max(-PIPE_HEIGHT + 10, min(previous_pipe_y + random.randint(-20, 20), VIRTUAL_HEIGHT - PIPE_HEIGHT - PIPE_GAP))
-        previous_pipe_y = y
-        pipe_pairs.append(PipePair(y=y))
-        spawn_timer = 0
+        bird.update(dt, keys_pressed)
 
-    for pipe_pair in pipe_pairs[:]:
-        pipe_pair.update(dt)
+        if spawn_timer >= PIPE_SPAWN_INTERVAL:
+            y = max(-PIPE_HEIGHT + 10, min(previous_pipe_y + random.randint(-20, 20), VIRTUAL_HEIGHT - PIPE_HEIGHT - PIPE_GAP))
+            previous_pipe_y = y
+            pipe_pairs.append(PipePair(y=y))
+            spawn_timer = 0
 
-        if pipe_pair.remove:
-            pipe_pairs.remove(pipe_pair)
+        for pipe_pair in pipe_pairs[:]:
+            pipe_pair.update(dt)
 
-    background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
-    ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+            if pipe_pair.remove:
+                pipe_pairs.remove(pipe_pair)
+
+            for pipe in pipe_pair.top_pipe, pipe_pair.bottom_pipe:
+                if bird.collides(pipe):
+                    scrolling = False
+
+        background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
+        ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
     # RENDERING
 
