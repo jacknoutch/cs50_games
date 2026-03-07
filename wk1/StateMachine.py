@@ -11,7 +11,17 @@ class StateMachine:
     def change_state(self, new_state):
         assert new_state in self.states, f"State {new_state} does not exist in the state machine."
         self.current_state.exit()
-        self.current_state = self.states[new_state]
+
+        factory = self.states[new_state]
+
+        if callable(factory):
+            state_object = factory()
+        else:
+            state_object = factory
+
+        state_object.state_machine = self
+
+        self.current_state = state_object
         self.current_state.enter()
 
     def update(self, dt, keys_pressed: pg.key.ScancodeWrapper):

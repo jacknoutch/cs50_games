@@ -1,4 +1,8 @@
+import pygame as pg
 
+from wk0.settings import WHITE
+from wk1.assets import assets
+from wk1.settings import VIRTUAL_WIDTH
 from wk1.states.BaseState import BaseState
 
 
@@ -6,8 +10,14 @@ class TitleScreenState(BaseState):
     def __init__(self,):
         super().__init__()
 
-    def update(self, dt):
-        pass
+    def update(self, dt: float, keys_pressed: pg.key.ScancodeWrapper):
+        
+        if keys_pressed[pg.K_RETURN]:
+            self.state_machine.change_state("play")
 
     def render(self, surface):
-        pass
+
+        title = assets.flappy_font.render(f"Fifty Bird", False, WHITE)
+        instructions = assets.medium_font.render("Press Enter", False, WHITE)
+        surface.blit(title, (VIRTUAL_WIDTH // 2 - title.get_width() // 2, 0))
+        surface.blit(instructions, (VIRTUAL_WIDTH // 2 - instructions.get_width() // 2, 20))

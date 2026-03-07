@@ -1,9 +1,7 @@
 import pygame as pg
 import random
 
-from wk1.Bird import Bird
-from wk1.Pipe import Pipe
-from wk1.PipePair import PipePair
+from wk1.assets import assets
 from wk1.StateMachine import StateMachine
 from wk1.settings import *
 from wk1.states import PlayState, TitleScreenState
@@ -23,24 +21,25 @@ clock = pg.time.Clock()
 
 ## Images
 
-background_image = pg.image.load(BACKGROUND_IMAGE).convert()
-ground_image = pg.image.load(GROUND_IMAGE).convert()
+assets.load_assets()  # load assets after display is initialized
+
+background_image = assets.background
+ground_image = assets.ground
 
 background_scroll = 0
 ground_scroll = 0
 
-## Game objects
-
-scrolling = True
-
 ## State Machine
 
+global s
 state_machine = StateMachine({
-    "play": PlayState.PlayState(),
-    "title": TitleScreenState.TitleScreenState()
+    "play": PlayState.PlayState,
+    "title": TitleScreenState.TitleScreenState
 })
 
-state_machine.change_state("play")
+state_machine.change_state("title")
+
+keys_pressed = pg.key.ScancodeWrapper()
 
 running = True
 
@@ -60,14 +59,12 @@ while running:
 
     # LOGIC
 
-    if scrolling:
+    keys_pressed = pg.key.get_just_pressed()
 
-        keys_pressed = pg.key.get_just_pressed()
+    background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
+    ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
-        background_scroll = (background_scroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_X
-        ground_scroll = (ground_scroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
-
-        state_machine.update(dt, keys_pressed)
+    state_machine.update(dt, keys_pressed)
 
     # RENDERING
 
