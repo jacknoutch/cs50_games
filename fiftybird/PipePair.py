@@ -1,7 +1,7 @@
 import pygame as pg
 
-from wk1.settings import PIPE_GAP, PIPE_HEIGHT, PIPE_SCROLL_SPEED, PIPE_WIDTH, VIRTUAL_WIDTH
-from wk1.Pipe import Pipe
+from fiftybird.settings import PIPE_GAP, PIPE_HEIGHT, PIPE_SCROLL_SPEED, PIPE_WIDTH, VIRTUAL_WIDTH
+from fiftybird.Pipe import Pipe
 
 class PipePair:
     def __init__(self, x:int = None, y:int = 0):

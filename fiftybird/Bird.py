@@ -1,8 +1,8 @@
 import pygame as pg
 
-from wk1.Pipe import Pipe
-from wk1.assets import assets
-from wk1.settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+from fiftybird.Pipe import Pipe
+from fiftybird.assets import assets
+from fiftybird.settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Bird:
 

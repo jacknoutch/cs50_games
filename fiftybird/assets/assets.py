@@ -1,5 +1,5 @@
 import pygame as pg
-from wk1.settings import PIPE_IMAGE, BIRD_IMAGE, BACKGROUND_IMAGE, GROUND_IMAGE
+from fiftybird.settings import PIPE_IMAGE, BIRD_IMAGE, BACKGROUND_IMAGE, GROUND_IMAGE
 
 def load_assets():
     # must be called after pg.display.set_mode(...)

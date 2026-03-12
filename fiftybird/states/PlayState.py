@@ -1,11 +1,11 @@
 import pygame as pg
 import random
 
-from wk1.assets import assets
-from wk1.states.BaseState import BaseState
-from wk1.Bird import Bird
-from wk1.PipePair import PipePair
-from wk1.settings import PIPE_GAP, PIPE_SCROLL_SPEED, PIPE_SPAWN_INTERVAL, PIPE_HEIGHT, PIPE_WIDTH, VIRTUAL_HEIGHT
+from fiftybird.assets import assets
+from fiftybird.states.BaseState import BaseState
+from fiftybird.Bird import Bird
+from fiftybird.PipePair import PipePair
+from fiftybird.settings import PIPE_GAP, PIPE_SCROLL_SPEED, PIPE_SPAWN_INTERVAL, PIPE_HEIGHT, PIPE_WIDTH, VIRTUAL_HEIGHT
 
 class PlayState(BaseState):
     def __init__(self):

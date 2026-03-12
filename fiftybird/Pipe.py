@@ -1,8 +1,8 @@
 import pygame as pg
 import random
 
-from wk1.assets import assets
-from wk1.settings import PIPE_IMAGE, PIPE_SCROLL_SPEED, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+from fiftybird.assets import assets
+from fiftybird.settings import PIPE_IMAGE, PIPE_SCROLL_SPEED, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Pipe:
     def __init__(self, orientation, y, image_path=PIPE_IMAGE):

@@ -1,9 +1,9 @@
 import pygame as pg
 
 from wk0.settings import WHITE
-from wk1.assets import assets
-from wk1.settings import VIRTUAL_WIDTH
-from wk1.states.BaseState import BaseState
+from fiftybird.assets import assets
+from fiftybird.settings import VIRTUAL_WIDTH
+from fiftybird.states.BaseState import BaseState
 
 
 class TitleScreenState(BaseState):

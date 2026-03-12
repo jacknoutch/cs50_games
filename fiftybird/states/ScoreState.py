@@ -1,8 +1,8 @@
 import pygame as pg
 
-from wk1.settings import VIRTUAL_WIDTH
-from wk1.assets import assets
-from wk1.states.BaseState import BaseState
+from fiftybird.settings import VIRTUAL_WIDTH
+from fiftybird.assets import assets
+from fiftybird.states.BaseState import BaseState
 
 
 class ScoreState(BaseState):

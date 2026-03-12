@@ -1,6 +1,6 @@
 import pygame as pg
 
-from wk1.states.BaseState import BaseState
+from fiftybird.states.BaseState import BaseState
 
 class StateMachine:
     def __init__(self, states: dict | None = None):

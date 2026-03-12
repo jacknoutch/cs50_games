@@ -1,8 +1,8 @@
 import pygame as pg
 
-from wk1.assets import assets
-from wk1.settings import VIRTUAL_WIDTH, VIRTUAL_HEIGHT
-from wk1.states.BaseState import BaseState
+from fiftybird.assets import assets
+from fiftybird.settings import VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+from fiftybird.states.BaseState import BaseState
 
 COUNTDOWNTIME = 0.75 # Time in seconds for each countdown tick'
 

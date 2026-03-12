@@ -1,11 +1,11 @@
 import pygame as pg
 import random
 
-from wk1.assets import assets
-from wk1.StateMachine import StateMachine
-from wk1.settings import *
-from wk1.states import CountdownState, PlayState, ScoreState, TitleScreenState
-from wk1.utils import compute_letterbox
+from fiftybird.assets import assets
+from fiftybird.StateMachine import StateMachine
+from fiftybird.settings import *
+from fiftybird.states import CountdownState, PlayState, ScoreState, TitleScreenState
+from fiftybird.utils import compute_letterbox
 
 # INITIALISATION
 
