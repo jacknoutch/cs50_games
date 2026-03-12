@@ -17,3 +17,14 @@ def load_assets():
     medium_font = pg.font.Font("wk1/assets/font.ttf", 14)
     flappy_font = pg.font.Font("wk1/assets/font.ttf", 28)
     huge_font = pg.font.Font("wk1/assets/font.ttf", 56)
+
+    # Sounds
+    global explosion_sound, jump_sound, hurt_sound, score_sound
+    explosion_sound = pg.mixer.Sound("wk1/assets/sfx/explosion.wav")
+    jump_sound = pg.mixer.Sound("wk1/assets/sfx/jump.wav")
+    hurt_sound = pg.mixer.Sound("wk1/assets/sfx/hurt.wav")
+    score_sound = pg.mixer.Sound("wk1/assets/sfx/score.wav")
+
+    # Music
+    global main_music
+    main_music = pg.mixer.Sound("wk1/assets/music/marios_way.mp3")

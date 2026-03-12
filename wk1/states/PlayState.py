@@ -56,11 +56,14 @@ class PlayState(BaseState):
             pipe_pair.update(dt)
 
             if pipe_pair.x + PIPE_WIDTH < self.bird.rect.x and not pipe_pair.scored:
+                assets.score_sound.play()
                 self.score += 1
                 pipe_pair.scored = True
 
             for pipe in pipe_pair.pipes.values():
                 if self.bird.collides(pipe):
+                    assets.hurt_sound.play()
+                    assets.explosion_sound.play()
                     self.state_machine.change_state('score', score=self.score)
 
             if pipe_pair.remove:

@@ -1,6 +1,7 @@
 import pygame as pg
 
 from wk1.Pipe import Pipe
+from wk1.assets import assets
 from wk1.settings import BIRD_IMAGE, GRAVITY, VIRTUAL_WIDTH, VIRTUAL_HEIGHT
 
 class Bird:
@@ -26,6 +27,7 @@ class Bird:
         self.rect.y += self.dy
 
         if keys_pressed[pg.K_SPACE]:
+            assets.jump_sound.play()
             self.jump(dt)
 
     def jump(self, dt: float):
@@ -38,4 +40,4 @@ class Bird:
         """
         Check if the bird collides with a pipe.
         """
-        return self.rect.colliderect(pipe.rect.inflate(-4,-4))
+        return self.rect.colliderect(pipe.rect.inflate(-12,-12))

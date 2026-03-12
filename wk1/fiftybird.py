@@ -29,6 +29,10 @@ ground_image = assets.ground
 background_scroll = 0
 ground_scroll = 0
 
+## Music (loop)
+
+assets.main_music.play(-1)
+
 ## State Machine
 
 state_machine = StateMachine({
