@@ -38,4 +38,4 @@ class Bird:
         """
         Check if the bird collides with a pipe.
         """
-        return self.rect.colliderect(pipe.rect)
+        return self.rect.colliderect(pipe.rect.inflate(-4,-4))
