@@ -1,10 +1,12 @@
 import pygame as pg
 
 from breakout.assets.assets import Assets
+from breakout.classes.Paddle import Paddle
+from breakout.classes.states.PlayState import PlayState
 from breakout.classes.states.StartState import StartState
 from breakout.classes.StateMachine import StateMachine
 from breakout.src.settings import FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
-from breakout.src.utils import compute_letterbox, display_fps
+from breakout.src.utils import compute_letterbox, display_fps, generate_paddles
 
 class Game:
     def __init__(self):
@@ -21,11 +23,14 @@ class Game:
         self.assets = Assets()
         self.assets.load_assets("breakout/assets/")
 
+        self.paddle_sprites = generate_paddles(self.assets.get_image("blocks"))
+
         # State machine
 
         self.state_engine = StateMachine()
         self.state_engine.game = self
         self.state_engine.add_state("start", StartState())
+        self.state_engine.add_state("play", PlayState())
         self.state_engine.change_state("start")
 
         self.events = None
@@ -65,7 +70,7 @@ class Game:
 
     def update(self):
 
-        self.state_engine.update()
+        self.state_engine.update(self.dt)
 
     def render(self):
 

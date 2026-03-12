@@ -16,7 +16,7 @@ class StartState(BaseState):
     def exit(self):
         print("Exiting Start State")
 
-    def update(self):
+    def update(self, dt):
         events = self.state_machine.game.events
 
         for event in events:

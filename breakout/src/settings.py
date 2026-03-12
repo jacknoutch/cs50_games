@@ -1,4 +1,5 @@
 # Display
+
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 

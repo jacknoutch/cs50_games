@@ -15,9 +15,9 @@ class StateMachine:
         self.current_state = self.states[name]
         self.current_state.enter(*args, **kwargs)
 
-    def update(self):
+    def update(self, dt):
         if self.current_state is not None:
-            self.current_state.update()
+            self.current_state.update(dt)
 
     def render(self, surface):
         if self.current_state is not None:
