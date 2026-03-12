@@ -8,14 +8,14 @@ class StateMachine:
         self.states = states if states is not None else {}
         self.current_state = self.base
 
-    def change_state(self, new_state):
+    def change_state(self, new_state, **kwargs):
         assert new_state in self.states, f"State {new_state} does not exist in the state machine."
         self.current_state.exit()
 
         factory = self.states[new_state]
 
         if callable(factory):
-            state_object = factory()
+            state_object = factory(**kwargs)
         else:
             state_object = factory
 

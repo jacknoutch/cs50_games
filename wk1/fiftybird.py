@@ -4,7 +4,7 @@ import random
 from wk1.assets import assets
 from wk1.StateMachine import StateMachine
 from wk1.settings import *
-from wk1.states import PlayState, TitleScreenState
+from wk1.states import PlayState, ScoreState, TitleScreenState
 from wk1.utils import compute_letterbox
 
 # INITIALISATION
@@ -31,9 +31,9 @@ ground_scroll = 0
 
 ## State Machine
 
-global s
 state_machine = StateMachine({
     "play": PlayState.PlayState,
+    "score": ScoreState.ScoreState,
     "title": TitleScreenState.TitleScreenState
 })
 
@@ -42,6 +42,16 @@ state_machine.change_state("title")
 keys_pressed = pg.key.ScancodeWrapper()
 
 running = True
+
+## Debug
+
+def debug(info, y=10, x=10):
+    text = assets.small_font.render(str(info), False, (255, 255, 255))
+    surf = pg.Surface((text.get_width() + 4, text.get_height() + 4))
+    surf.fill((0, 0, 0))
+    surf.blit(text, (2, 2))
+    game_surface.blit(surf, (x, y))
+    
 
 while running:
 

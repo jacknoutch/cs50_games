@@ -6,6 +6,8 @@ from wk1.Pipe import Pipe
 class PipePair:
     def __init__(self, x:int = None, y:int = 0):
 
+        self.scored = False
+
         # initialise pipe past the right edge of the screen
         self.x = float(x) if x is not None else VIRTUAL_WIDTH + 32
 
