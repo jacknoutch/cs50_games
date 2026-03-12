@@ -4,7 +4,7 @@ import random
 from wk1.assets import assets
 from wk1.StateMachine import StateMachine
 from wk1.settings import *
-from wk1.states import PlayState, ScoreState, TitleScreenState
+from wk1.states import CountdownState, PlayState, ScoreState, TitleScreenState
 from wk1.utils import compute_letterbox
 
 # INITIALISATION
@@ -32,6 +32,7 @@ ground_scroll = 0
 ## State Machine
 
 state_machine = StateMachine({
+    "countdown": CountdownState.CountdownState,
     "play": PlayState.PlayState,
     "score": ScoreState.ScoreState,
     "title": TitleScreenState.TitleScreenState
@@ -51,7 +52,7 @@ def debug(info, y=10, x=10):
     surf.fill((0, 0, 0))
     surf.blit(text, (2, 2))
     game_surface.blit(surf, (x, y))
-    
+
 
 while running:
 
