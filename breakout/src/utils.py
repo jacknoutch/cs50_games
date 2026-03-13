@@ -160,3 +160,12 @@ def generate_bricks(sheet) -> dict:
             bricks[colour].append(brick)
 
     return bricks
+
+def debug(info, surface, x, y):
+    # Display debug information
+    font = pg.font.Font(None, 12)
+    text = font.render(info, False, (255, 255, 255))
+    background = pg.Surface(text.get_size())
+    background.fill((0, 0, 0))
+    background.blit(text, (0, 0))
+    surface.blit(background, (x, y))

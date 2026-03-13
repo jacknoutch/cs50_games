@@ -26,7 +26,12 @@ class PlayState(BaseState):
         
         player_sprite = self.state_machine.game.paddle_sprites[self.colour][self.size]
         self.player = Paddle(self.colour, self.size, player_sprite)
-        self.ball = Ball(self.state_machine.game.ball_sprites["red"], self.state_machine.game.assets.sounds["wall_hit"])
+        ball_sounds = {
+            "wall_hit": self.state_machine.game.assets.sounds["wall_hit"],
+            "paddle_hit": self.state_machine.game.assets.sounds["paddle_hit"],
+            "brick-hit-2": self.state_machine.game.assets.sounds["brick-hit-2"]
+        }
+        self.ball = Ball(self.state_machine.game.ball_sprites["red"], ball_sounds)
         self.ball.reset()
         self.ball.start()
 
@@ -57,19 +62,20 @@ class PlayState(BaseState):
         else:
             self.player.stop()
 
-        if self.ball.collide(self.player):
-            self.ball.bounce()
-            self.state_machine.game.assets.sounds["paddle_hit"].play()
-
-        for brick in self.bricks:
-            collision = self.ball.collide(brick)
-            if collision:
-                self.ball.bounce()
-                self.state_machine.game.assets.sounds["brick-hit-2"].play()
-                self.bricks.remove(brick)
-
         self.player.update(dt)
         self.ball.update(dt)
+
+        collision = self.ball.collide(self.player, dt)
+        if collision:
+            self.ball.bounce(collision, self.player)
+
+
+        for brick in self.bricks[:]:
+            collision = self.ball.collide(brick)
+            if collision:
+                self.ball.bounce(collision, brick)
+                self.bricks.remove(brick)
+
 
 
     def render(self, surface):
@@ -82,3 +88,4 @@ class PlayState(BaseState):
         if self.state_machine.game.debug:
             pg.draw.rect(surface, (255, 0, 0), self.player.rect, 1)
             pg.draw.rect(surface, (255, 0, 0), self.ball.rect, 1)
+            self.state_machine.game.debug_info(f"Ball Speed: {self.ball.speed}", surface, 1, 20)

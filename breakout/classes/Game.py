@@ -6,7 +6,7 @@ from breakout.classes.states.PlayState import PlayState
 from breakout.classes.states.StartState import StartState
 from breakout.classes.StateMachine import StateMachine
 from breakout.src.settings import FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
-from breakout.src.utils import compute_letterbox, display_fps, generate_balls, generate_bricks, generate_paddles
+from breakout.src.utils import compute_letterbox, debug, display_fps, generate_balls, generate_bricks, generate_paddles
 
 class Game:
     def __init__(self):
@@ -41,6 +41,7 @@ class Game:
         # Debug
 
         self.debug = True
+        self.debug_info = debug
 
         # Game elements
 

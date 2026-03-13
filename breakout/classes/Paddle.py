@@ -16,10 +16,10 @@ class Paddle:
 
         self.speed = PADDLE_SPEED
         self.direction = 1
-        self.velocity = pg.math.Vector2(0)
+        self.direction = pg.math.Vector2(0)
 
     def update(self, dt):
-        self.rect.center += self.velocity * self.speed * dt
+        self.rect.center += self.direction * self.speed * dt
 
         if self.rect.left <= 0:
             self.rect.left = 0
@@ -30,7 +30,7 @@ class Paddle:
         surface.blit(self.surface, self.rect)
 
     def move(self, dx):
-        self.velocity = pg.math.Vector2(dx, 0)
+        self.direction = pg.math.Vector2(dx, 0)
 
     def stop(self):
-        self.velocity = pg.math.Vector2(0, 0)
+        self.direction = pg.math.Vector2(0, 0)
