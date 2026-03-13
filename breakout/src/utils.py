@@ -161,6 +161,29 @@ def generate_bricks(sheet) -> dict:
 
     return bricks
 
+
+def generate_hearts(sheet) -> dict:
+    """
+    Generate heart sprites from the given sprite sheet.
+
+    Returns a dictionary mapping heart statuses to their surfaces.
+    """
+    print(sheet.get_size())
+
+    x = 0
+    y = 0
+
+    heart_width = 10
+    heart_height = 9
+
+    hearts = {
+        "full": sheet.subsurface(x, y, heart_width, heart_height),
+        "empty": sheet.subsurface(x + heart_width, y, heart_width, heart_height)
+    }
+
+    return hearts
+
+
 def debug(info, surface, x, y):
     # Display debug information
     font = pg.font.Font(None, 12)

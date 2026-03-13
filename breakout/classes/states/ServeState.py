@@ -11,7 +11,6 @@ class ServeState(BaseState):
 
         self.colour = "blue"
         self.size = "medium"
-        self.health = 3
         self.score = 0
 
     def enter(self):
@@ -50,8 +49,7 @@ class ServeState(BaseState):
                     self.state_machine.change_state("play",
                                                     self.player,
                                                     self.ball,
-                                                    self.bricks
-                                                    self.health,
+                                                    self.bricks,
                                                     self.score)
 
     def render(self, surface):
@@ -60,3 +58,5 @@ class ServeState(BaseState):
 
         for brick in self.bricks:
             brick.render(surface)
+
+        self.state_machine.game.render_hearts()

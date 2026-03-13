@@ -6,8 +6,8 @@ from breakout.classes.states.PlayState import PlayState
 from breakout.classes.states.ServeState import ServeState
 from breakout.classes.states.StartState import StartState
 from breakout.classes.StateMachine import StateMachine
-from breakout.src.settings import FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
-from breakout.src.utils import compute_letterbox, debug, display_fps, generate_balls, generate_bricks, generate_paddles
+from breakout.src.settings import FPS, MAX_HEALTH, HEALTH_MARGIN, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
+from breakout.src.utils import compute_letterbox, debug, display_fps, generate_balls, generate_bricks, generate_hearts, generate_paddles
 
 class Game:
     def __init__(self):
@@ -27,6 +27,7 @@ class Game:
         self.paddle_sprites = generate_paddles(self.assets.get_image("blocks"))
         self.ball_sprites = generate_balls(self.assets.get_image("blocks"))
         self.brick_sprites = generate_bricks(self.assets.get_image("blocks"))
+        self.heart_sprites = generate_hearts(self.assets.get_image("hearts"))
 
         # State machine
 
@@ -49,6 +50,8 @@ class Game:
 
         self.background = self.assets.get_image("background")
         self.background = pg.transform.scale(self.background, (VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
+
+        self.health = MAX_HEALTH
 
         self.running = True
         self.clock = pg.time.Clock()
@@ -101,3 +104,12 @@ class Game:
         self.display.blit(scaled_letterbox, offset)
 
         pg.display.flip()
+
+    def render_hearts(self):
+        for i in range(3):
+            if i < self.health:
+                heart = self.heart_sprites["full"]
+            else:
+                heart = self.heart_sprites["empty"]
+
+            self.game_surface.blit(heart, (VIRTUAL_WIDTH - MAX_HEALTH * 12 + i * 12 - HEALTH_MARGIN, HEALTH_MARGIN))
