@@ -58,13 +58,13 @@ class PlayState(BaseState):
             self.player.stop()
 
         if self.ball.collide(self.player):
-            self.ball.bounce("vertical")
+            self.ball.bounce()
             self.state_machine.game.assets.sounds["paddle_hit"].play()
 
         for brick in self.bricks:
             collision = self.ball.collide(brick)
             if collision:
-                self.ball.bounce(collision)
+                self.ball.bounce()
                 self.state_machine.game.assets.sounds["brick-hit-2"].play()
                 self.bricks.remove(brick)
 
