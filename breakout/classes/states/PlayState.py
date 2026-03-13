@@ -56,6 +56,7 @@ class PlayState(BaseState):
 
         if self.ball.rect.bottom >= VIRTUAL_HEIGHT:
             self.state_machine.game.health -= 1
+            self.state_machine.game.assets.sounds["hurt"].play()
             if self.state_machine.game.health <= 0:
                 self.state_machine.change_state("start")
             else:
