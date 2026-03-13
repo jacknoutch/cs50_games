@@ -52,7 +52,7 @@ class Game:
         self.background = self.assets.get_image("background")
         self.background = pg.transform.scale(self.background, (VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
 
-        self.health = 1
+        self.health = MAX_HEALTH
         self.score = 0
 
         self.running = True

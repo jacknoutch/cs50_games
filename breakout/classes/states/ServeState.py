@@ -10,7 +10,7 @@ class ServeState(BaseState):
         super().__init__()
 
         self.colour = "blue"
-        self.size = "medium"
+        self.size = "small"
 
     def enter(self):
         print("Entering Serve State")
@@ -35,7 +35,6 @@ class ServeState(BaseState):
         print("Exiting Serve State")
 
     def update(self, dt):
-        keys_pressed = self.state_machine.game.keys_pressed
         events = self.state_machine.game.events
 
         for event in events:

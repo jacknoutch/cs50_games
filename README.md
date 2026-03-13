@@ -30,6 +30,10 @@ Delta time allows movement to be measured against time, not framerate. As such, 
 
 Pixels are counted in whole numbers. You can't print half of a pixel to the screen.
 
+### Collision detection
+
+[Arkanoid Tutorial for collision detection](https://github.com/noooway/love2d_arkanoid_tutorial/wiki/Resolving-Collisions)
+
 ## Readings
 
 [How to Make an RPG](https://howtomakeanrpg.com/)

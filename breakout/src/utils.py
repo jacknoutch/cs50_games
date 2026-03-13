@@ -1,5 +1,7 @@
 import pygame as pg
 
+from breakout.classes.Brick import BRICK_COLOURS
+
 def compute_letterbox(virtual_width, virtual_height, window):
     """
     Compute scale and centered rectangle to render a virtual surface into a window
@@ -140,9 +142,9 @@ def generate_bricks(sheet) -> dict:
 
     brick_width = 32
     brick_height = 16
-    row_length = 6 * brick_width
+    row_length = 6
 
-    colours = ["blue", "green", "red", "purple", "yellow", "grey"]
+    colours = BRICK_COLOURS
     tiers = 4
 
     bricks = {}
@@ -151,10 +153,10 @@ def generate_bricks(sheet) -> dict:
         bricks[colour] = []
         for j in range(tiers):
             print(f"Generating brick sprite for {colour} - {j}")
-            print(f"  Position: ({x + ((i * tiers + j) * brick_width) % row_length}, {y + (i * tiers + j) // row_length * brick_height})")
+            print(f"  Position: ({x + ((i * tiers + j) * brick_width) % (row_length * brick_width)}, {y + (i * tiers + j) // 6 * brick_height})")
             brick = sheet.subsurface(
-                x + ((i * tiers+ j) * brick_width) % row_length,
-                y + (i * tiers + j) // row_length * brick_height,
+                x + ((i * tiers + j) * brick_width) % (row_length * brick_width),
+                y + (i * tiers + j) // 6 * brick_height,
                 brick_width, brick_height
             )
             bricks[colour].append(brick)

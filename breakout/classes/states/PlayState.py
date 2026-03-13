@@ -17,7 +17,6 @@ class PlayState(BaseState):
         self.bricks = None
         self.paused = False
 
-
     def enter(self, player, ball, bricks):
         print("Entering Play State")
         self.player = player
@@ -70,11 +69,20 @@ class PlayState(BaseState):
 
 
         for brick in self.bricks[:]:
+
             collision = self.ball.collide(brick)
+
             if collision:
+
+                brick.update_hit()
+
+                score = brick.calculate_score()
+                self.state_machine.game.score += score
+
                 self.ball.bounce(collision, brick)
+
+            if not brick.inplay:
                 self.bricks.remove(brick)
-                self.state_machine.game.score += 1
 
     def render(self, surface):
         self.player.render(surface)
