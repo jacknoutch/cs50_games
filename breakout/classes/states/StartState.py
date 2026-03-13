@@ -55,7 +55,7 @@ class StartState(BaseState):
     def select_choice(self):
         choice = self.choices[self.selection]
         if choice == "Start":
-            self.state_machine.change_state("play")
+            self.state_machine.change_state("serve")
         elif choice == "High Scores":
             self.state_machine.change_state("high_scores")
         elif choice == "Quit":

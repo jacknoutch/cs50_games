@@ -13,26 +13,17 @@ class PlayState(BaseState):
         self.size = "medium"
         self.player = None
         self.ball = None
+        self.bricks = None
         self.paused = False
 
 
-    def enter(self):
+    def enter(self, player, ball, bricks, health, score):
         print("Entering Play State")
-        brick_assets = {
-            "sprites": self.state_machine.game.brick_sprites,
-            "sfx": self.state_machine.game.assets.sounds["brick-hit-1"]
-        }
-        self.bricks = LevelMaker.create_map(brick_assets)
-        
-        player_sprite = self.state_machine.game.paddle_sprites[self.colour][self.size]
-        self.player = Paddle(self.colour, self.size, player_sprite)
-        ball_sounds = {
-            "wall_hit": self.state_machine.game.assets.sounds["wall_hit"],
-            "paddle_hit": self.state_machine.game.assets.sounds["paddle_hit"],
-            "brick-hit-2": self.state_machine.game.assets.sounds["brick-hit-2"]
-        }
-        self.ball = Ball(self.state_machine.game.ball_sprites["red"], ball_sounds)
-        self.ball.reset()
+        self.player = player
+        self.ball = ball
+        self.bricks = bricks
+        self.health = health
+        self.score = score
         self.ball.start()
 
     def exit(self):

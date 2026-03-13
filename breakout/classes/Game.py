@@ -3,6 +3,7 @@ import pygame as pg
 from breakout.assets.assets import Assets
 from breakout.classes.Paddle import Paddle
 from breakout.classes.states.PlayState import PlayState
+from breakout.classes.states.ServeState import ServeState
 from breakout.classes.states.StartState import StartState
 from breakout.classes.StateMachine import StateMachine
 from breakout.src.settings import FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
@@ -33,6 +34,7 @@ class Game:
         self.state_engine.game = self
         self.state_engine.add_state("start", StartState())
         self.state_engine.add_state("play", PlayState())
+        self.state_engine.add_state("serve", ServeState())
         self.state_engine.change_state("start")
 
         self.events = None
