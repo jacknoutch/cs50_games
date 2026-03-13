@@ -12,14 +12,15 @@ class ServeState(BaseState):
         self.colour = "blue"
         self.size = "small"
 
-    def enter(self):
+    def enter(self, bricks=None):
         print("Entering Serve State")
 
         brick_assets = {
             "sprites": self.state_machine.game.brick_sprites,
             "sfx": self.state_machine.game.assets.sounds["brick-hit-1"]
         }
-        self.bricks = LevelMaker.create_map(brick_assets)
+
+        self.bricks = bricks if bricks is not None else LevelMaker.create_map(brick_assets)
 
         player_sprite = self.state_machine.game.paddle_sprites[self.colour][self.size]
         self.player = Paddle(self.colour, self.size, player_sprite)

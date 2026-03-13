@@ -58,7 +58,8 @@ class PlayState(BaseState):
             if self.state_machine.game.health <= 0:
                 self.state_machine.change_state("game_over")
             else:
-                self.state_machine.change_state("serve")
+                self.state_machine.change_state("serve",
+                                                self.bricks)
 
         self.player.update(dt)
         self.ball.update(dt)
