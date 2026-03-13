@@ -20,9 +20,9 @@ ASSET_PATHS = {
         "font": f"{BASE_DIR}/fonts/font.ttf",
     },
     "music": {
-        "1": f"{BASE_DIR}/music/music.mp3",
-        "2": f"{BASE_DIR}/music/music2.mp3",
-        "3": f"{BASE_DIR}/music/music3.mp3",
+        "music1": f"{BASE_DIR}/music/music.mp3",
+        "music2": f"{BASE_DIR}/music/music2.mp3",
+        "music3": f"{BASE_DIR}/music/music3.mp3",
     }
 }
 
@@ -57,10 +57,10 @@ class AssetManager:
         return self.fonts.get((name, size))
 
     def load_music(self, path, name):
-        music = pg.mixer.music.load(path)
-        self.music[name] = music
+        self.music[name] = path
 
-    def play_music(self, loop=-1):
+    def play_music(self, name, loop=-1):
+        pg.mixer.music.load(self.music[name])
         pg.mixer.music.play(loop)
 
     def stop_music(self):

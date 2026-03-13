@@ -47,11 +47,15 @@ class Game:
 
         self.background = self.asset_manager.get_image("background")
         self.background = pg.transform.scale2x(self.background)
+        self.background_x = -self.background.get_width()
+        self.background_scroll_speed = 150
 
         self.running = True
 
 
     def run(self):
+
+        self.asset_manager.play_music("music3")
 
         while self.running:
 
@@ -87,15 +91,15 @@ class Game:
     def update(self):
         
         self.state_machine.update(self.dt)
-        
+        self.background_x = (self.background_x - self.background_scroll_speed * self.dt) % self.background.get_width()
 
     def render(self):
 
-        self.game_surface.blit(self.background, (0, 0))
+        self.game_surface.blit(self.background, (self.background_x - self.background.get_width(), 0))
 
         self.state_machine.render(self.game_surface)
 
-        if self.debug:
+        if self.debug:      
             display_fps(self.clock, self.game_surface)
 
         # letterbox the display
