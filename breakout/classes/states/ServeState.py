@@ -11,7 +11,6 @@ class ServeState(BaseState):
 
         self.colour = "blue"
         self.size = "medium"
-        self.score = 0
 
     def enter(self):
         print("Entering Serve State")
@@ -49,8 +48,7 @@ class ServeState(BaseState):
                     self.state_machine.change_state("play",
                                                     self.player,
                                                     self.ball,
-                                                    self.bricks,
-                                                    self.score)
+                                                    self.bricks)
 
     def render(self, surface):
         self.player.render(surface)

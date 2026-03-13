@@ -18,13 +18,12 @@ class PlayState(BaseState):
         self.paused = False
 
 
-    def enter(self, player, ball, bricks, score):
+    def enter(self, player, ball, bricks):
         print("Entering Play State")
         self.player = player
         self.ball = ball
         self.bricks = bricks
         self.health = self.state_machine.game.health
-        self.score = score
         self.ball.start()
 
     def exit(self):
@@ -58,7 +57,7 @@ class PlayState(BaseState):
             self.state_machine.game.health -= 1
             self.state_machine.game.assets.sounds["hurt"].play()
             if self.state_machine.game.health <= 0:
-                self.state_machine.change_state("start")
+                self.state_machine.change_state("game_over")
             else:
                 self.state_machine.change_state("serve")
 
@@ -75,8 +74,7 @@ class PlayState(BaseState):
             if collision:
                 self.ball.bounce(collision, brick)
                 self.bricks.remove(brick)
-
-
+                self.state_machine.game.score += 1
 
     def render(self, surface):
         self.player.render(surface)
