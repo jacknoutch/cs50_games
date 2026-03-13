@@ -1,6 +1,9 @@
 import pygame as pg
 
 BASE_DIR = "match3/assets"
+TILE_SIZE = 32
+TILE_ROW_COUNT = 9
+TILE_COLUMN_COUNT = 12
 
 # Asset paths
 ASSET_PATHS = {
@@ -41,6 +44,30 @@ class AssetManager:
     def get_image(self, name):
         return self.images.get(name)
 
+    def parse_tiles(self):
+        """
+        Parse a sprite sheet into individual tiles, resulting in a 2d array of surfaces.
+        """
+        tiles_image = self.images.get("tiles")
+        if not tiles_image:
+            return
+
+        tile_width = TILE_SIZE
+        tile_height = TILE_SIZE
+        columns = TILE_COLUMN_COUNT
+        rows = TILE_ROW_COUNT
+
+        tiles = []
+
+        for row in range(rows):
+            row_tiles = []
+            for col in range(columns):
+                tile = tiles_image.subsurface((col * tile_width, row * tile_height, tile_width, tile_height))
+                row_tiles.append(tile)
+            tiles.append(row_tiles)
+
+        self.images["tiles"] = tiles
+
     def load_sfx(self, name, path):
         sound = pg.mixer.Sound(path)
         self.sfx[name] = sound
@@ -77,3 +104,5 @@ class AssetManager:
                     self.load_font(name, path)
                 elif category == "music":
                     self.load_music(path, name)
+
+        self.parse_tiles()

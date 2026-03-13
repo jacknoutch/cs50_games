@@ -1,6 +1,9 @@
 import pygame as pg
+import random
 
+from match3.assets.AssetManager import TILE_COLUMN_COUNT, TILE_ROW_COUNT, TILE_SIZE
 from match3.classes.states.BaseState import BaseState
+from match3.src.settings import MARGIN, VIRTUAL_HEIGHT, VIRTUAL_WIDTH
 
 class StartState(BaseState):
 
@@ -28,6 +31,21 @@ class StartState(BaseState):
         self.menu_options = ["Start Game", "Options", "Quit"]
         self.selected_option = 0
 
+        self.background_surf = pg.Surface((VIRTUAL_WIDTH - MARGIN * 2, VIRTUAL_HEIGHT - MARGIN * 4), pg.SRCALPHA)
+        self.background_surf.fill((0, 0, 0, 127))
+
+    def enter(self):
+        self.game = self.state_machine.game
+        if self.game.debug:
+            print("Entered state: " + self.__class__.__name__)
+
+        # tiles
+        self.tiles = []
+        for i in range(64):
+            tile_sprites = self.game.asset_manager.get_image("tiles")
+            tile = tile_sprites[random.randint(0, TILE_ROW_COUNT - 1)][random.randint(0, TILE_COLUMN_COUNT - 1)]
+            self.tiles.append(tile)
+
     def update(self, dt):
 
         for event in self.game.events:
@@ -50,8 +68,10 @@ class StartState(BaseState):
     def render(self, surface):
 
         font = self.game.asset_manager.get_font("font", 36)
+        surface.blit(self.background_surf, (MARGIN, MARGIN))
         self.render_title(surface, font)
         self.render_menu(surface, font)
+        self.render_tiles(surface)
 
     def render_title(self, surface, font):
 
@@ -91,3 +111,8 @@ class StartState(BaseState):
         elif option == "Quit":
             print("Quit selected")
             self.game.running = False
+
+    def render_tiles(self, surface):
+        x, y = 400, 100
+        for i, tile in enumerate(self.tiles):
+            surface.blit(tile, (x + i % 8 * TILE_SIZE, y + i // 8 * TILE_SIZE))
