@@ -30,7 +30,7 @@ def display_fps(clock, surface):
     surf.blit(text, (0, 0))
     surface.blit(surf, (1, 1))
 
-def debug(info, surface, x, y):
+def debug(info, surface, x=1, y=20):
     """
     Display debug information on the given surface at the specified position.
     """

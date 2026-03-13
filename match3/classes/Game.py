@@ -1,6 +1,7 @@
 import os
 import pygame as pg
 
+from match3.classes.states.StartState import StartState
 from match3.assets.AssetManager import AssetManager
 from match3.classes.StateMachine import StateMachine
 from match3.src.settings import FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
@@ -21,26 +22,31 @@ class Game:
 
         # ASSETS
 
-        asset_manager = AssetManager()
-        asset_manager.load_assets()
-
-        # STATE MACHINE
-
-        self.state_machine = StateMachine()
-        self.state_machine.game = self
-
-        self.events = None
-        self.keys_pressed = None
-        self.mouse_pressed = None
+        self.asset_manager = AssetManager()
+        self.asset_manager.load_assets()
 
         # DEBUG
 
         self.debug = True
 
+        # STATE MACHINE
+
+        self.state_machine = StateMachine()
+        self.state_machine.game = self
+        self.state_machine.add_state("start", StartState())
+        self.state_machine.change_state("start")
+
+        self.events = None
+        self.keys_pressed = None
+        self.mouse_pressed = None
+
         # GAME ELEMENTS
 
         self.clock = pg.time.Clock()
         self.dt = 0
+
+        self.background = self.asset_manager.get_image("background")
+        self.background = pg.transform.scale2x(self.background)
 
         self.running = True
 
@@ -65,12 +71,12 @@ class Game:
 
         for event in pg.event.get():
 
+            self.events.append(event)
+
             if event.type == pg.QUIT:
                 self.running = False
 
             if event.type == pg.KEYDOWN:
-                self.events.append(event)
-    
                 if event.key == pg.K_ESCAPE:
                     self.running = False
 
@@ -85,8 +91,7 @@ class Game:
 
     def render(self):
 
-        # background
-        self.game_surface.fill((40, 40, 40))
+        self.game_surface.blit(self.background, (0, 0))
 
         self.state_machine.render(self.game_surface)
 
