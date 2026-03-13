@@ -1,26 +1,28 @@
 import pygame as pg
 
+BASE_DIR = "match3/assets"
+
 # Asset paths
 ASSET_PATHS = {
     "images": {
-        "background": "assets/images/background.png",
-        "tiles": "assets/images/match3.png",
+        "background": f"{BASE_DIR}/images/background.png",
+        "tiles": f"{BASE_DIR}/images/match3.png",
     },
     "sfx": {
-        "clock": "assets/sfx/clock.wav",
-        "error": "assets/sfx/error.wav",
-        "game-over": "assets/sfx/game-over.wav",
-        "match": "assets/sfx/match.wav",
-        "next-level": "assets/sfx/next-level.wav",
-        "select": "assets/sfx/select.wav",
+        "clock": f"{BASE_DIR}/sfx/clock.wav",
+        "error": f"{BASE_DIR}/sfx/error.wav",
+        "game-over": f"{BASE_DIR}/sfx/game-over.wav",
+        "match": f"{BASE_DIR}/sfx/match.wav",
+        "next-level": f"{BASE_DIR}/sfx/next-level.wav",
+        "select": f"{BASE_DIR}/sfx/select.wav",
     },
     "fonts": {
-        "font": "assets/fonts/font.ttf",
+        "font": f"{BASE_DIR}/fonts/font.ttf",
     },
     "music": {
-        "1": "assets/music/music.mp3",
-        "2": "assets/music/music2.mp3",
-        "3": "assets/music/music3.mp3",
+        "1": f"{BASE_DIR}/music/music.mp3",
+        "2": f"{BASE_DIR}/music/music2.mp3",
+        "3": f"{BASE_DIR}/music/music3.mp3",
     }
 }
 
