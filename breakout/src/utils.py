@@ -93,3 +93,70 @@ def generate_paddles(sheet) -> dict:
         }
 
     return paddles
+
+
+def generate_balls(sheet) -> dict:
+    """
+    Generate ball sprites from the given sprite sheet.
+
+    Returns a dictionary mapping ball colours to their surfaces.
+    """
+    print(sheet.get_size())
+    
+    x = 32 * 3
+    y = 16 * 3
+
+    ball_width = 8
+    ball_height = 8
+
+    row_length = 4
+    colours = ["blue", "green", "red", "purple", "yellow", "grey", "gold"]
+
+    balls = {}
+
+    for i, colour in enumerate(colours):
+        # print(f"Generating ball sprite for {colour}")
+        # print(f"  Position: ({x + i * ball_width % row_length}, {y + i // row_length * ball_height})")
+        ball = sheet.subsurface(
+            x + i * ball_width % row_length,
+            y + i // row_length * ball_height,
+            ball_width, ball_height
+            )
+        balls[colour] = ball
+
+    return balls
+
+
+def generate_bricks(sheet) -> dict:
+    """
+    Generate brick sprites from the given sprite sheet.
+
+    Returns a dictionary mapping brick colours to their surfaces.
+    """
+    print(sheet.get_size())
+
+    x = 0
+    y = 0
+
+    brick_width = 32
+    brick_height = 16
+    row_length = 6 * brick_width
+
+    colours = ["blue", "green", "red", "purple", "yellow", "grey"]
+    tiers = 4
+
+    bricks = {}
+
+    for i, colour in enumerate(colours):
+        bricks[colour] = []
+        for j in range(tiers):
+            print(f"Generating brick sprite for {colour} - {j}")
+            print(f"  Position: ({x + ((i * tiers + j) * brick_width) % row_length}, {y + (i * tiers + j) // row_length * brick_height})")
+            brick = sheet.subsurface(
+                x + ((i * tiers+ j) * brick_width) % row_length,
+                y + (i * tiers + j) // row_length * brick_height,
+                brick_width, brick_height
+            )
+            bricks[colour].append(brick)
+
+    return bricks

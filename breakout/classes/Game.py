@@ -6,7 +6,7 @@ from breakout.classes.states.PlayState import PlayState
 from breakout.classes.states.StartState import StartState
 from breakout.classes.StateMachine import StateMachine
 from breakout.src.settings import FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
-from breakout.src.utils import compute_letterbox, display_fps, generate_paddles
+from breakout.src.utils import compute_letterbox, display_fps, generate_balls, generate_bricks, generate_paddles
 
 class Game:
     def __init__(self):
@@ -24,6 +24,8 @@ class Game:
         self.assets.load_assets("breakout/assets/")
 
         self.paddle_sprites = generate_paddles(self.assets.get_image("blocks"))
+        self.ball_sprites = generate_balls(self.assets.get_image("blocks"))
+        self.brick_sprites = generate_bricks(self.assets.get_image("blocks"))
 
         # State machine
 
@@ -67,6 +69,9 @@ class Game:
                 self.running = False
             if event.type == pg.KEYDOWN:
                 self.events.append(event)
+    
+                if event.key == pg.K_d:
+                    self.debug = not self.debug
 
     def update(self):
 
@@ -77,7 +82,7 @@ class Game:
         # Background
 
         self.game_surface.blit(self.background, (0, 0))
-        
+
         # Render state
         
         self.state_engine.render(self.game_surface)

@@ -1,5 +1,7 @@
 import pygame as pg
 
+from breakout.classes.Ball import Ball
+from breakout.classes.LevelMaker import LevelMaker
 from breakout.classes.Paddle import Paddle
 from breakout.classes.states.BaseState import BaseState
 
@@ -10,12 +12,23 @@ class PlayState(BaseState):
         self.colour = "blue"
         self.size = "medium"
         self.player = None
+        self.ball = None
         self.paused = False
+
 
     def enter(self):
         print("Entering Play State")
-        self.sprite = self.state_machine.game.paddle_sprites[self.colour][self.size]
-        self.player = Paddle(self.colour, self.size, self.sprite)
+        brick_assets = {
+            "sprites": self.state_machine.game.brick_sprites,
+            "sfx": self.state_machine.game.assets.sounds["brick-hit-1"]
+        }
+        self.bricks = LevelMaker.create_map(brick_assets)
+        
+        player_sprite = self.state_machine.game.paddle_sprites[self.colour][self.size]
+        self.player = Paddle(self.colour, self.size, player_sprite)
+        self.ball = Ball(self.state_machine.game.ball_sprites["red"], self.state_machine.game.assets.sounds["wall_hit"])
+        self.ball.reset()
+        self.ball.start()
 
     def exit(self):
         print("Exiting Play State")
@@ -44,7 +57,28 @@ class PlayState(BaseState):
         else:
             self.player.stop()
 
+        if self.ball.collide(self.player):
+            self.ball.bounce("vertical")
+            self.state_machine.game.assets.sounds["paddle_hit"].play()
+
+        for brick in self.bricks:
+            collision = self.ball.collide(brick)
+            if collision:
+                self.ball.bounce(collision)
+                self.state_machine.game.assets.sounds["brick-hit-2"].play()
+                self.bricks.remove(brick)
+
         self.player.update(dt)
+        self.ball.update(dt)
+
 
     def render(self, surface):
         self.player.render(surface)
+        self.ball.render(surface)
+
+        for brick in self.bricks:
+            brick.render(surface)
+
+        if self.state_machine.game.debug:
+            pg.draw.rect(surface, (255, 0, 0), self.player.rect, 1)
+            pg.draw.rect(surface, (255, 0, 0), self.ball.rect, 1)
