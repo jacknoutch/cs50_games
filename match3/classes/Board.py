@@ -63,8 +63,9 @@ class Board:
             # drop tiles above
             for r in range(row - 1, -1, -1):
                 if self.tiles[r][col] is not None:
+                    # tween tile down
                     self.tiles[r][col].row += 1
-                    self.tiles[r][col].rect.y += TILE_SIZE
+                    self.tiles[r][col].start_tween((col * TILE_SIZE, (r + 1) * TILE_SIZE))
                     self.tiles[r + 1][col] = self.tiles[r][col]
                     self.tiles[r][col] = None
 
