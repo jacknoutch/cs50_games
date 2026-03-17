@@ -1,6 +1,7 @@
 import os
 import pygame as pg
 
+from match3.classes.states.PlayState import PlayState
 from match3.classes.states.StartState import StartState
 from match3.assets.AssetManager import AssetManager
 from match3.classes.StateMachine import StateMachine
@@ -35,6 +36,7 @@ class Game:
         self.state_machine.game = self
         self.state_machine.add_state("start", StartState())
         self.state_machine.change_state("start")
+        self.state_machine.add_state("play", PlayState())
 
         self.events = None
         self.keys_pressed = None
@@ -47,8 +49,9 @@ class Game:
 
         self.background = self.asset_manager.get_image("background")
         self.background = pg.transform.scale2x(self.background)
-        self.background_x = -self.background.get_width()
+        self.background_x = 0
         self.background_scroll_speed = 150
+        self.background_loop_point = 416
 
         self.running = True
 
@@ -80,10 +83,6 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
 
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    self.running = False
-
                 if event.key == pg.K_d:
                     self.debug = not self.debug
 
@@ -91,11 +90,14 @@ class Game:
     def update(self):
         
         self.state_machine.update(self.dt)
-        self.background_x = (self.background_x - self.background_scroll_speed * self.dt) % self.background.get_width()
+        self.background_x = (self.background_x - self.background_scroll_speed * self.dt)
+        if self.background_x <= -self.background_loop_point:
+            self.background_x = 0
+
 
     def render(self):
 
-        self.game_surface.blit(self.background, (self.background_x - self.background.get_width(), 0))
+        self.game_surface.blit(self.background, (self.background_x, 0))
 
         self.state_machine.render(self.game_surface)
 

@@ -1,9 +1,8 @@
 import pygame as pg
 
+from match3.src.settings import TILE_SIZE, TILE_ROW_COUNT, TILE_COLUMN_COUNT
+
 BASE_DIR = "match3/assets"
-TILE_SIZE = 32
-TILE_ROW_COUNT = 9
-TILE_COLUMN_COUNT = 12
 
 # Asset paths
 ASSET_PATHS = {
