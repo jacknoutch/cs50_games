@@ -83,12 +83,9 @@ class PlayState(BaseState):
 
     
     def swap_tiles(self, tile1, tile2):
-        # swap positions in board
-        self.board.tiles[tile1.row * self.board.rows + tile1.col], self.board.tiles[tile2.row * self.board.rows + tile2.col] = self.board.tiles[tile2.row * self.board.rows + tile2.col], self.board.tiles[tile1.row * self.board.rows + tile1.col]
-
-        # swap row and col attributes
-        tile1.row, tile2.row = tile2.row, tile1.row
-        tile1.col, tile2.col = tile2.col, tile1.col
+        row1, col1 = tile1.row, tile1.col
+        tile1.row, tile1.col = tile2.row, tile2.col
+        tile2.row, tile2.col = row1, col1
 
         # start tweening to new positions
         tile1.start_tween((tile1.col * TILE_SIZE, tile1.row * TILE_SIZE))

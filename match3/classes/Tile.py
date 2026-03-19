@@ -23,7 +23,7 @@ class Tile:
         # tweening properties
         self.tweening = False
         self.tween_elapsed_time = 0
-        self.tween_duration = 1.5 #s
+        self.tween_duration = 0.6 #s
         self.tween_start_pos = (0, 0)
         self.tween_target_pos = (0, 0)
 
@@ -36,6 +36,8 @@ class Tile:
 
 
     def update(self, dt):
+        self.rect.topleft = (self.col * TILE_SIZE, self.row * TILE_SIZE)
+
         if not self.tweening:
             return
         
