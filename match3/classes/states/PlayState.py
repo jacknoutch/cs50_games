@@ -23,7 +23,8 @@ class PlayState(BaseState):
         self.cursor_col = 0
 
         self.selected_tile = None
-        self.pending_tween_tiles = None
+
+        self.pending_tweening = False
 
 
     def update(self, dt):
@@ -32,18 +33,19 @@ class PlayState(BaseState):
             if tile is not None:
                 tile.update(dt)
 
-        if self.pending_tween_tiles is not None:
-            tile1, tile2 = self.pending_tween_tiles
-            if not tile1.tweening and not tile2.tweening:
-                self.pending_tween_tiles = None
+        if self.pending_tweening:
+            self.cursor_active = False
+
+            tweening_tiles = [tile for tile in self.board.tiles if tile.tweening]
+            if not tweening_tiles:
+                self.pending_tweening = False
                 if self.board.check_matches():
                     print("Match found!")
                     self.board.remove_matches() 
                     self.board.replace_empty_tiles()
-            self.cursor_active = False
         else:
             self.cursor_active = True
-            
+
 
         for event in self.game.events:
 
@@ -65,10 +67,10 @@ class PlayState(BaseState):
                     self.move_cursor(0, 1)
 
                 if event.key == pg.K_RETURN:
-                    if self.pending_tween_tiles is None:
+                    if not self.pending_tweening:
                         self.handle_selection()
 
-
+    
     def handle_selection(self):
         cursor_tile = self.board.tiles[self.cursor_row * self.board.cols + self.cursor_col]
         if self.selected_tile is None:
@@ -92,6 +94,7 @@ class PlayState(BaseState):
         tile2.start_tween((tile1.rect.topleft))
 
         self.pending_tween_tiles = (tile1, tile2)
+        self.pending_tweening = True
         self.board.sort_tiles()
 
 
