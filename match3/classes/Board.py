@@ -20,13 +20,9 @@ class Board:
         self.tiles = []
 
         for row in range(self.rows):
-            tile_row = []
-
             for col in range(self.cols):
-                tile_row.append(Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5)))
-            
-            self.tiles.append(tile_row)
-
+                new_tile = Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5))
+                self.tiles.append(new_tile)
 
     def update(self, dt):
         pass
@@ -37,54 +33,52 @@ class Board:
         Check the board for matches of 3 or more tiles of the same colour in a row or column.
         """
 
-        for row in range(self.rows):
-            for col in range(self.cols):
-                tile = self.tiles[row][col]
-                colour = tile.colour
+        for i, tile in enumerate(self.tiles):
+            colour = tile.colour
 
-                # Check horizontal match
-                if col <= self.cols - 3:
-                    if self.tiles[row][col + 1].colour == colour and self.tiles[row][col + 2].colour == colour:
-                        self.matches[(row, col)] = True
-                        self.matches[(row, col + 1)] = True
-                        self.matches[(row, col + 2)] = True
+            # Check horizontal match
+            if tile.col <= self.cols - 3:
+                if self.tiles[i + 1].colour == colour and self.tiles[i + 2].colour == colour:
+                    self.matches[(tile.row, tile.col)] = True
+                    self.matches[(tile.row, tile.col + 1)] = True
+                    self.matches[(tile.row, tile.col + 2)] = True
 
-                # Check vertical match
-                if row <= self.rows - 3:
-                    if self.tiles[row + 1][col].colour == colour and self.tiles[row + 2][col].colour == colour:
-                        self.matches[(row, col)] = True
-                        self.matches[(row + 1, col)] = True
-                        self.matches[(row + 2, col)] = True
-                    
+            # Check vertical match
+            if tile.row <= self.rows - 3:
+                if self.tiles[i + self.cols].colour == colour and self.tiles[i + 2 * self.cols].colour == colour:
+                    self.matches[(tile.row, tile.col)] = True
+                    self.matches[(tile.row + 1, tile.col)] = True
+                    self.matches[(tile.row + 2, tile.col)] = True
+
         return self.matches
     
 
     def remove_matches(self):
-        for (row, col) in self.matches.keys():
-            self.tiles[row][col] = None
+        # for (row, col) in self.matches.keys():
+        #     self.tiles[row][col] = None
             
-            # drop tiles above
-            for r in range(row - 1, -1, -1):
-                if self.tiles[r][col] is not None:
-                    # tween tile down
-                    self.tiles[r][col].row += 1
-                    self.tiles[r][col].start_tween((col * TILE_SIZE, (r + 1) * TILE_SIZE))
-                    self.tiles[r + 1][col] = self.tiles[r][col]
-                    self.tiles[r][col] = None
+        #     # drop tiles above
+        #     for r in range(row - 1, -1, -1):
+        #         if self.tiles[r][col] is not None:
+        #             # tween tile down
+        #             self.tiles[r][col].row += 1
+        #             self.tiles[r][col].start_tween((col * TILE_SIZE, (r + 1) * TILE_SIZE))
+        #             self.tiles[r + 1][col] = self.tiles[r][col]
+        #             self.tiles[r][col] = None
 
-        self.matches = {}
+        # self.matches = {}
+        pass
 
 
     def replace_empty_tiles(self):
-        for row in range(self.rows):
-            for col in range(self.cols):
-                if self.tiles[row][col] is None:
-                    self.tiles[row][col] = Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5))
+        # for row in range(self.rows):
+        #     for col in range(self.cols):
+        #         if self.tiles[row][col] is None:
+        #             self.tiles[row][col] = Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5))
+        pass
 
 
     def render(self, surface, offset):
 
-        for row in self.tiles:
-            for tile in row:
-                if tile is not None:
-                    tile.render(surface, offset)
+        for tile in self.tiles:
+            tile.render(surface, offset)

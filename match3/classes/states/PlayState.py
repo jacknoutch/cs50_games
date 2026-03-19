@@ -27,10 +27,9 @@ class PlayState(BaseState):
 
     def update(self, dt):
 
-        for row in self.board.tiles:
-            for tile in row:
-                if tile is not None:
-                    tile.update(dt)
+        for tile in self.board.tiles:
+            if tile is not None:
+                tile.update(dt)
 
         if self.pending_tween_tiles is not None:
             tile1, tile2 = self.pending_tween_tiles
@@ -71,13 +70,14 @@ class PlayState(BaseState):
 
 
     def handle_selection(self):
+        cursor_tile = self.board.tiles[self.cursor_row * self.board.rows + self.cursor_col]
         if self.selected_tile is None:
             self.select_tile()
-        elif self.selected_tile == self.board.tiles[self.cursor_row][self.cursor_col]:
+        elif self.selected_tile == cursor_tile:
             self.selected_tile = None
         elif (abs(self.selected_tile.row - self.cursor_row) + abs(self.selected_tile.col - self.cursor_col)) == 1:
             print(f"Swapping tile at row {self.selected_tile.row}, col {self.selected_tile.col} with tile at row {self.cursor_row}, col {self.cursor_col}")
-            self.swap_tiles(self.selected_tile, self.board.tiles[self.cursor_row][self.cursor_col])
+            self.swap_tiles(self.selected_tile, cursor_tile)
             self.selected_tile = None
         else:
             self.select_tile()
@@ -85,7 +85,7 @@ class PlayState(BaseState):
     
     def swap_tiles(self, tile1, tile2):
         # swap positions in board
-        self.board.tiles[tile1.row][tile1.col], self.board.tiles[tile2.row][tile2.col] = self.board.tiles[tile2.row][tile2.col], self.board.tiles[tile1.row][tile1.col]
+        self.board.tiles[tile1.row * self.board.rows + tile1.col], self.board.tiles[tile2.row * self.board.rows + tile2.col] = self.board.tiles[tile2.row * self.board.rows + tile2.col], self.board.tiles[tile1.row * self.board.rows + tile1.col]
 
         # swap row and col attributes
         tile1.row, tile2.row = tile2.row, tile1.row
@@ -106,7 +106,7 @@ class PlayState(BaseState):
 
     def select_tile(self):
         if self.cursor_active:
-            self.selected_tile = self.board.tiles[self.cursor_row][self.cursor_col]
+            self.selected_tile = self.board.tiles[self.cursor_row * self.board.rows + self.cursor_col]
             print(f"Selected tile at row {self.cursor_row}, col {self.cursor_col} with colour {self.selected_tile.colour} and variety {self.selected_tile.variety}")
 
 
