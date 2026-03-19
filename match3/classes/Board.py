@@ -24,8 +24,13 @@ class Board:
                 new_tile = Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5))
                 self.tiles.append(new_tile)
 
+
     def update(self, dt):
         pass
+
+
+    def sort_tiles(self):
+        self.tiles.sort(key=lambda tile: (tile.row, tile.col))
 
 
     def check_matches(self):

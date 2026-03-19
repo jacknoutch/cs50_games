@@ -28,6 +28,10 @@ class Tile:
         self.tween_target_pos = (0, 0)
 
 
+    def __repr__(self):
+        return f"Tile(col={self.col}, row={self.row}, colour={self.colour}, variety={self.variety})"
+
+
     def start_tween(self, target_pos):
         self.tweening = True
         self.tween_elapsed_time = 0

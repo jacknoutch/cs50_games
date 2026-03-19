@@ -1,6 +1,7 @@
 import pygame as pg
 
 from match3.classes.Board import Board
+from match3.classes.Tile import Tile
 from match3.classes.states.BaseState import BaseState
 from match3.src.settings import BOARD_OFFSET, BOARD_SIZE, TILE_SIZE
 
@@ -42,8 +43,7 @@ class PlayState(BaseState):
             self.cursor_active = False
         else:
             self.cursor_active = True
-
-
+            
 
         for event in self.game.events:
 
@@ -81,17 +81,18 @@ class PlayState(BaseState):
         else:
             self.select_tile()
 
-    
-    def swap_tiles(self, tile1, tile2):
+
+    def swap_tiles(self, tile1: Tile, tile2: Tile):
         row1, col1 = tile1.row, tile1.col
         tile1.row, tile1.col = tile2.row, tile2.col
         tile2.row, tile2.col = row1, col1
 
         # start tweening to new positions
-        tile1.start_tween((tile1.col * TILE_SIZE, tile1.row * TILE_SIZE))
-        tile2.start_tween((tile2.col * TILE_SIZE, tile2.row * TILE_SIZE))
+        tile1.start_tween((tile2.rect.topleft))
+        tile2.start_tween((tile1.rect.topleft))
 
         self.pending_tween_tiles = (tile1, tile2)
+        self.board.sort_tiles()
 
 
     def move_cursor(self, d_row, d_col):
