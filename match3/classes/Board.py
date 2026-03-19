@@ -9,6 +9,9 @@ class Board:
         self.x = x
         self.y = y
 
+        self.rows = BOARD_SIZE
+        self.cols = BOARD_SIZE
+
         self.matches = {}
         self.initialise_tiles()
 
@@ -16,10 +19,10 @@ class Board:
     def initialise_tiles(self):
         self.tiles = []
 
-        for row in range(BOARD_SIZE):
+        for row in range(self.rows):
             tile_row = []
-            
-            for col in range(BOARD_SIZE):
+
+            for col in range(self.cols):
                 tile_row.append(Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5)))
             
             self.tiles.append(tile_row)
@@ -34,20 +37,20 @@ class Board:
         Check the board for matches of 3 or more tiles of the same colour in a row or column.
         """
 
-        for row in range(BOARD_SIZE):
-            for col in range(BOARD_SIZE):
+        for row in range(self.rows):
+            for col in range(self.cols):
                 tile = self.tiles[row][col]
                 colour = tile.colour
 
                 # Check horizontal match
-                if col <= BOARD_SIZE - 3:
+                if col <= self.cols - 3:
                     if self.tiles[row][col + 1].colour == colour and self.tiles[row][col + 2].colour == colour:
                         self.matches[(row, col)] = True
                         self.matches[(row, col + 1)] = True
                         self.matches[(row, col + 2)] = True
 
                 # Check vertical match
-                if row <= BOARD_SIZE - 3:
+                if row <= self.rows - 3:
                     if self.tiles[row + 1][col].colour == colour and self.tiles[row + 2][col].colour == colour:
                         self.matches[(row, col)] = True
                         self.matches[(row + 1, col)] = True
@@ -73,8 +76,8 @@ class Board:
 
 
     def replace_empty_tiles(self):
-        for row in range(BOARD_SIZE):
-            for col in range(BOARD_SIZE):
+        for row in range(self.rows):
+            for col in range(self.cols):
                 if self.tiles[row][col] is None:
                     self.tiles[row][col] = Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5))
 
