@@ -1,7 +1,7 @@
 import random
 
 from match3.classes.Tile import Tile
-from match3.src.settings import BOARD_SIZE, TILE_SIZE
+from match3.src.settings import BOARD_SIZE
 
 class Board:
     def __init__(self, x, y, asset_manager):
@@ -59,20 +59,10 @@ class Board:
     
 
     def remove_matches(self):
-        # for (row, col) in self.matches.keys():
-        #     self.tiles[row][col] = None
-            
-        #     # drop tiles above
-        #     for r in range(row - 1, -1, -1):
-        #         if self.tiles[r][col] is not None:
-        #             # tween tile down
-        #             self.tiles[r][col].row += 1
-        #             self.tiles[r][col].start_tween((col * TILE_SIZE, (r + 1) * TILE_SIZE))
-        #             self.tiles[r + 1][col] = self.tiles[r][col]
-        #             self.tiles[r][col] = None
+        for (row, col) in self.matches.keys():
+            self.tiles[row * self.cols + col] = Tile(col, row, self.asset_manager, -1, -1, True)
 
-        # self.matches = {}
-        pass
+        self.matches = {}
 
 
     def replace_empty_tiles(self):

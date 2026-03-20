@@ -3,7 +3,7 @@ import pygame as pg
 from match3.classes.Board import Board
 from match3.classes.Tile import Tile
 from match3.classes.states.BaseState import BaseState
-from match3.src.settings import BOARD_OFFSET, BOARD_SIZE, TILE_SIZE
+from match3.src.settings import BOARD_OFFSET, TILE_SIZE
 
 class PlayState(BaseState):
 
@@ -38,11 +38,14 @@ class PlayState(BaseState):
 
             tweening_tiles = [tile for tile in self.board.tiles if tile.tweening]
             if not tweening_tiles:
+
                 self.pending_tweening = False
+
                 if self.board.check_matches():
                     print("Match found!")
                     self.board.remove_matches() 
                     self.board.replace_empty_tiles()
+
         else:
             self.cursor_active = True
 
@@ -93,12 +96,11 @@ class PlayState(BaseState):
         tile1.start_tween((tile2.rect.topleft))
         tile2.start_tween((tile1.rect.topleft))
 
-        self.pending_tween_tiles = (tile1, tile2)
         self.pending_tweening = True
         self.board.sort_tiles()
 
 
-    def move_cursor(self, d_row, d_col):
+    def move_cursor(self, d_row: int, d_col: int):
         if self.cursor_active:
             self.cursor_row = (self.cursor_row + d_row) % self.board.rows
             self.cursor_col = (self.cursor_col + d_col) % self.board.cols

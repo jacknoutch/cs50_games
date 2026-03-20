@@ -5,16 +5,23 @@ from match3.src.settings import TILE_SIZE
 
 class Tile:
 
-    def __init__(self, x, y, asset_manager, colour, variety=0):
+    def __init__(self, x, y, asset_manager, colour, variety=0, is_empty=False):
         
         # board position
         self.col = x
         self.row = y
 
         # surface and rect
-        self.surf = asset_manager.images["tiles"][colour][variety]
-        self.rect = self.surf.get_frect()
-        self.rect.topleft = (x * TILE_SIZE, y * TILE_SIZE)
+        self.is_empty = is_empty
+        if is_empty:
+            self.surf = pg.Surface((TILE_SIZE, TILE_SIZE), pg.SRCALPHA)
+            self.surf.fill((0, 0, 0, 0))
+            self.rect = self.surf.get_rect()
+            self.rect.topleft = (x * TILE_SIZE, y * TILE_SIZE)
+        else:
+            self.surf = asset_manager.images["tiles"][colour][variety]
+            self.rect = self.surf.get_frect()
+            self.rect.topleft = (x * TILE_SIZE, y * TILE_SIZE)
 
         # tile properties
         self.colour = colour
