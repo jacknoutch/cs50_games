@@ -22,8 +22,40 @@ class Board:
 
         for row in range(self.rows):
             for col in range(self.cols):
-                new_tile = Tile(col, row, self.asset_manager, random.randint(0, 5), random.randint(0, 5))
+                # pick a colour and variety but avoid creating any immediate 3-in-a-row
+                colour = random.randint(0, 5)
+                variety = random.randint(0, 5)
+
+                # while placing this tile would create a horizontal or vertical match,
+                # pick a different colour/variety and try again
+                while True:
+                    creates_match = False
+
+                    # check horizontal: look at two tiles to the left
+                    if col >= 2:
+                        left1 = self.get_tile(row, col - 1)
+                        left2 = self.get_tile(row, col - 2)
+                        if left1.colour == colour and left2.colour == colour:
+                            creates_match = True
+
+                    # check vertical: look at two tiles above
+                    if row >= 2:
+                        up1 = self.get_tile(row - 1, col)
+                        up2 = self.get_tile(row - 2, col)
+                        if up1.colour == colour and up2.colour == colour:
+                            creates_match = True
+
+                    if not creates_match:
+                        break
+
+                    # re-roll colour/variety and test again
+                    colour = random.randint(0, 5)
+                    variety = random.randint(0, 5)
+
+                new_tile = Tile(col, row, self.asset_manager, colour, variety)
                 self.tiles.append(new_tile)
+
+        
 
 
     def update(self, dt):
@@ -42,6 +74,39 @@ class Board:
 
     def sort_tiles(self):
         self.tiles.sort(key=lambda tile: (tile.row, tile.col))
+
+
+    def has_empty_tiles(self) -> bool:
+        """
+        Returns True if there are empty tiles in the board, False otherwise.
+        """
+        empty_tiles = False
+        for col in range(self.cols):
+            for row in range(self.rows-1):
+                if self.get_tile(row, col).is_empty:
+                    empty_tiles = True
+                    break
+
+        return empty_tiles
+    
+
+    def fill_empty_tiles(self):
+        """
+        Fills any empty tiles with a random Tile.
+        """
+        for col in range(self.cols):
+            for row in range(self.rows-1):
+                if self.get_tile(row, col).is_empty:
+                    self.set_tile(
+                        row,
+                        col,
+                        Tile(row,
+                             col,
+                             self.asset_manager,
+                             random.randint(0, 5),
+                             random.randint(0, 5)
+                        )
+                    )
 
 
     def check_matches(self):
@@ -70,6 +135,9 @@ class Board:
     
 
     def remove_matches(self):
+        """
+        Remove matched tiles from the board.
+        """
         for (row, col) in self.matches.keys():
             self.set_tile(row, col, Tile(col, row, self.asset_manager, -1, -1, True))
 
