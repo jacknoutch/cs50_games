@@ -39,7 +39,7 @@ class StartState(BaseState):
         # tween to other states
         self.tweening = False
         self.tween_targe = None
-        self.tween_duration = 1.0 # seconds
+        self.tween_duration = 0.5 # seconds
         self.tween_elapsed = 0.0
 
 
