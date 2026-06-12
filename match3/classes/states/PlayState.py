@@ -17,7 +17,7 @@ class PlayState(BaseState):
             print("Entered state: " + self.__class__.__name__)
         
         self.board = Board(0, 0, self.game.asset_manager)
-        
+
         self.cursor_active = True
         self.cursor_row = 0
         self.cursor_col = 0
@@ -25,6 +25,7 @@ class PlayState(BaseState):
         self.selected_tile = None
 
         self.pending_tweening = False
+        self.empty_tiles = False
 
 
     def update(self, dt):
@@ -33,19 +34,29 @@ class PlayState(BaseState):
             if tile is not None:
                 tile.update(dt)
 
+
+        # tweening
         if self.pending_tweening:
             self.cursor_active = False
 
             tweening_tiles = [tile for tile in self.board.tiles if tile.tweening]
-            if not tweening_tiles:
 
+            if not tweening_tiles:
+                # tweening has finished
                 self.pending_tweening = False
 
-                if self.board.check_matches():
-                    print("Match found!")
-                    self.board.remove_matches() 
-                    self.board.replace_empty_tiles()
+        # empty tiles
+        elif self.empty_tiles:
+            self.empty_tiles = self.board.replace_empty_tiles()
+            self.pending_tweening = True
 
+        # matches present
+        elif self.board.check_matches():
+            print("Match found!")
+            self.board.remove_matches()
+            self.empty_tiles = True
+
+        # user may interact
         else:
             self.cursor_active = True
 
@@ -76,13 +87,21 @@ class PlayState(BaseState):
     
     def handle_selection(self):
         cursor_tile = self.board.tiles[self.cursor_row * self.board.cols + self.cursor_col]
+
+        # select
         if self.selected_tile is None:
             self.select_tile()
+        
+        # unselect
         elif self.selected_tile == cursor_tile:
             self.selected_tile = None
+
+        # swap tile (select tile next to existing selection)
         elif (abs(self.selected_tile.row - self.cursor_row) + abs(self.selected_tile.col - self.cursor_col)) == 1:
             self.swap_tiles(self.selected_tile, cursor_tile)
             self.selected_tile = None
+        
+        # other
         else:
             self.select_tile()
 

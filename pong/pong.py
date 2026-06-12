@@ -117,7 +117,7 @@ while running:
     keys = pg.key.get_pressed()
 
     if game_state == "serve":
-        ball.dy = random.randint(-50, 50)
+        ball.dy = random.randint(-35, 35)
         if serving_player == 1:
             ball.dx = random.randint(140,200)
         elif serving_player == 2:

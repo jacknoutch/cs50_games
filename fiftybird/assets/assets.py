@@ -13,18 +13,18 @@ def load_assets():
 
     ## Fonts
     global small_font, medium_font, flappy_font, huge_font
-    small_font = pg.font.Font("wk1/assets/font.ttf", 8)
-    medium_font = pg.font.Font("wk1/assets/font.ttf", 14)
-    flappy_font = pg.font.Font("wk1/assets/font.ttf", 28)
-    huge_font = pg.font.Font("wk1/assets/font.ttf", 56)
+    small_font = pg.font.Font("fiftybird/assets/font.ttf", 8)
+    medium_font = pg.font.Font("fiftybird/assets/font.ttf", 14)
+    flappy_font = pg.font.Font("fiftybird/assets/font.ttf", 28)
+    huge_font = pg.font.Font("fiftybird/assets/font.ttf", 56)
 
     # Sounds
     global explosion_sound, jump_sound, hurt_sound, score_sound
-    explosion_sound = pg.mixer.Sound("wk1/assets/sfx/explosion.wav")
-    jump_sound = pg.mixer.Sound("wk1/assets/sfx/jump.wav")
-    hurt_sound = pg.mixer.Sound("wk1/assets/sfx/hurt.wav")
-    score_sound = pg.mixer.Sound("wk1/assets/sfx/score.wav")
+    explosion_sound = pg.mixer.Sound("fiftybird/assets/sfx/explosion.wav")
+    jump_sound = pg.mixer.Sound("fiftybird/assets/sfx/jump.wav")
+    hurt_sound = pg.mixer.Sound("fiftybird/assets/sfx/hurt.wav")
+    score_sound = pg.mixer.Sound("fiftybird/assets/sfx/score.wav")
 
     # Music
     global main_music
-    main_music = pg.mixer.Sound("wk1/assets/music/marios_way.mp3")
+    main_music = pg.mixer.Sound("fiftybird/assets/music/marios_way.mp3")

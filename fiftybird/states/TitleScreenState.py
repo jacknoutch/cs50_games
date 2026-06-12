@@ -1,6 +1,6 @@
 import pygame as pg
 
-from wk0.settings import WHITE
+WHITE = (255,255,255)
 from fiftybird.assets import assets
 from fiftybird.settings import VIRTUAL_WIDTH
 from fiftybird.states.BaseState import BaseState
