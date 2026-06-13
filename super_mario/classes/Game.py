@@ -1,7 +1,8 @@
 import os
 import pygame as pg
 
-from super_mario.src.settings import COLOURS, TILES, FPS, TILE_HEIGHT, TILE_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
+from super_mario.classes.Player import Player
+from super_mario.src.settings import COLOURS, TILES, FPS, TILE_SIZE, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
 
 
 class Game:
@@ -48,8 +49,8 @@ class Game:
 
         # TILEMAP
 
-        self.map_tile_width = VIRTUAL_WIDTH // TILE_WIDTH
-        self.map_tile_height = VIRTUAL_HEIGHT // TILE_HEIGHT
+        self.map_tile_width = VIRTUAL_WIDTH // TILE_SIZE
+        self.map_tile_height = VIRTUAL_HEIGHT // TILE_SIZE
 
         self.tilemap = []
 
@@ -59,7 +60,12 @@ class Game:
         # CAMERA
 
         self.camera_x = 0.0
-        self.camera_speed = 200.0
+        self.camera_speed = 160.0
+
+
+        # IN GAME OBJECTS
+
+        self.player = Player()
 
         
         self.running = True
@@ -112,6 +118,8 @@ class Game:
 
         self.render_map(self.game_surface)
 
+        self.player.render(self.game_surface)
+
         # scale the virtual surface to the window size and blit to the display
         scaled = pg.transform.scale(self.game_surface, (WINDOW_WIDTH, WINDOW_HEIGHT))
         self.display.blit(scaled, (0, 0))
@@ -128,25 +136,25 @@ class Game:
 
 
     def render_map(self, surface):
-        tileset_cols = self.tile_surface.get_width() // TILE_WIDTH
+        tileset_cols = self.tile_surface.get_width() // TILE_SIZE
 
         for i, tile in enumerate(self.tilemap):
             col = i % self.map_tile_width
             row = i // self.map_tile_width
 
-            dest_x = int(col * TILE_WIDTH - self.camera_x)
-            dest_y = row * TILE_HEIGHT
+            dest_x = int(col * TILE_SIZE - self.camera_x)
+            dest_y = row * TILE_SIZE
 
-            if dest_x + TILE_WIDTH < 0 or dest_x > VIRTUAL_WIDTH:
+            if dest_x + TILE_SIZE < 0 or dest_x > VIRTUAL_WIDTH:
                 continue
 
             if tile != TILES.SKY:
-                src_x = (tile % tileset_cols) * TILE_WIDTH
-                src_y = (tile // tileset_cols) * TILE_HEIGHT
+                src_x = (tile % tileset_cols) * TILE_SIZE
+                src_y = (tile // tileset_cols) * TILE_SIZE
                 surface.blit(
                     self.tile_surface,
                     (dest_x, dest_y),
-                    area=pg.Rect(src_x, src_y, TILE_WIDTH, TILE_HEIGHT),
+                    area=pg.Rect(src_x, src_y, TILE_SIZE, TILE_SIZE),
                 )
 
 
