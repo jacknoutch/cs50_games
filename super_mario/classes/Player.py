@@ -22,11 +22,24 @@ class Player:
 
         self.current_frame = 0
 
+        self.rect = self.get_surf().get_rect()
+        self.x = self.rect.x
+        self.y = self.rect.y
 
-        # IN GAME ATTRIBUTES
+        self.speed = 160
+
+
+        # 
 
         self.tile_x = 7
         self.tile_y = 4
+
+
+    def update(self):
+
+        # POSITION
+
+        self.rect = self.get_surf().get_rect(topleft=self.rect.topleft)
 
     
     def render(self, surface):
@@ -34,3 +47,12 @@ class Player:
         pos = (self.tile_x * TILE_SIZE, self.tile_y* TILE_SIZE + TILE_SIZE - self.tile_height)
 
         surface.blit(self.frames[self.current_frame], pos)
+
+    #----------
+
+    def get_surf(self):
+        return self.frames[self.current_frame]
+
+    def move(self, dx):
+
+        self.rect.x += dx * self.speed

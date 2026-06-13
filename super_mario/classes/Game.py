@@ -105,10 +105,16 @@ class Game:
     def update(self):
 
         if self.keys_pressed:
+
             if self.keys_pressed[pg.K_LEFT]:
-                self.camera_x -= self.camera_speed * self.dt
+                self.player.move(-1 * self.dt)
+            
             if self.keys_pressed[pg.K_RIGHT]:
-                self.camera_x += self.camera_speed * self.dt
+                self.player.move(self.dt)
+
+
+        # Center camera on player
+        self.camera_x = self.player.rect.x - VIRTUAL_WIDTH / 2 + self.player.tile_width / 2
 
 
     def render(self):
