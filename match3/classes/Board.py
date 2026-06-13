@@ -2,9 +2,12 @@ import random
 
 from match3.classes.Tile import Tile
 from match3.src.settings import BOARD_SIZE, TILE_SIZE
-from match3.src.tween import create_pos_tween,ease_out_quad, TWEEN_DEFAULT_RATE
+from match3.src.tween import create_pos_tween,ease_out_quad, TWEEN_DEFAULT_RATE, ShrinkSpinTween
 
 class Board:
+
+    # INIT, UPDATE, RENDER
+
     def __init__(self, x, y, asset_manager, difficulty, tween_manager=None):
         self.x = x
         self.y = y
@@ -18,6 +21,19 @@ class Board:
 
         self.matches = {}
         self.initialise_tiles()
+
+
+    def update(self, dt):
+        pass
+
+
+    def render(self, surface, offset):
+
+        for tile in self.tiles:
+            tile.render(surface, offset)
+
+
+    # HELPER METHODS
 
 
     def add_tile(self, row, col):
@@ -61,15 +77,14 @@ class Board:
 
 
     def initialise_tiles(self):
+        """
+        Creates a new board of Tiles which does not contain any matches.
+        """
         self.tiles = []
 
         for row in range(self.rows):
             for col in range(self.cols):
                 self.add_tile(row, col)
-
-
-    def update(self, dt):
-        pass
 
 
     def get_tile(self, row, col):
@@ -90,33 +105,34 @@ class Board:
         """
         Returns True if there are empty tiles in the board, False otherwise.
         """
-        empty_tiles = False
-        for col in range(self.cols):
-            for row in range(self.rows):
-                if self.get_tile(row, col).is_empty:
-                    empty_tiles = True
-                    break
+        empty_tiles = [tile for tile in self.tiles if tile.is_empty]
 
-        return empty_tiles
+        return len(empty_tiles) > 0
     
 
-    def fill_empty_tiles(self):
-        """
-        Fills any empty tiles with a random Tile.
-        """
-        for col in range(self.cols):
-            for row in range(self.rows):
-                if self.get_tile(row, col).is_empty:
-                    self.set_tile(
-                        row,
-                        col,
-                        Tile(col,
-                             row,
-                             self.asset_manager,
-                             random.randint(0, self.difficulty),
-                             random.randint(0, self.difficulty)
-                        )
-                    )
+    # TWEENING
+
+    def create_drop_tween(self, tile, destination, duration=TWEEN_DEFAULT_RATE):
+        tween = create_pos_tween(tile, tile.rect.topleft, destination, duration, None, ease_out_quad)
+        self.tween_manager.add(tween)
+        return tween
+    
+
+    # PLAYSTATE METHODS
+
+    def swap_tiles(self, tile1: Tile, tile2: Tile):
+        row1, col1 = tile1.row, tile1.col
+        tile1.row, tile1.col = tile2.row, tile2.col
+        tile2.row, tile2.col = row1, col1
+
+        # start tweening to new positions
+        tween1 = tile1.start_tween(tile2.rect.topleft)
+        tween2 = tile2.start_tween(tile1.rect.topleft)
+
+        self.tween_manager.add(tween1)
+        self.tween_manager.add(tween2)
+
+        self.sort_tiles()
 
 
     def check_matches(self):
@@ -146,8 +162,8 @@ class Board:
 
     def remove_matches(self):
         """
-        Remove matched tiles from the board by animating them shrinking to their central point
-        while spinning 360 degrees, then replacing them with an empty tile when the animation completes.
+        Removes matched tiles from the board with an animation tween and replaces the tiles
+        with empty ones.
         """
         # iterate over a snapshot of keys so we can schedule tweens safely
         for (row, col) in list(self.matches.keys()):
@@ -157,135 +173,18 @@ class Board:
             def _on_complete(r=row, c=col):
                 self.set_tile(r, c, Tile(c, r, self.asset_manager, -1, -1, True))
 
-            # create a shrink+spin tween that scales the tile down to 0 while rotating it 360deg,
-            # keeping its center fixed.
-            class _ShrinkSpinTween:
-                def __init__(self, tile, duration, on_complete, easing):
-                    self.tile = tile
-                    self.duration = duration
-                    self.on_complete = on_complete
-                    self.easing = easing
-
-                    self.elapsed = 0.0
-                    self.start_w = tile.rect.width
-                    self.start_h = tile.rect.height
-                    # ensure tile has scale/rotation properties used by Tile.render
-                    if not hasattr(tile, 'scale'):
-                        tile.scale = 1.0
-                    if not hasattr(tile, 'rotation'):
-                        tile.rotation = 0.0
-                    self.center = tile.rect.center
-                    self.finished = False
-
-                def update(self, dt):
-                    if self.finished:
-                        return
-
-                    self.elapsed += dt
-                    t = min(1.0, self.elapsed / self.duration)
-                    eased = self.easing(t)
-
-                    # scale goes from 1.0 -> 0.0, rotation from 0 -> 360
-                    new_scale = max(0.0, 1.0 - eased)
-                    new_rotation = eased * 180.0
-
-                    # apply to tile (Tile.render should respect these)
-                    self.tile.scale = new_scale
-                    self.tile.rotation = new_rotation
-
-                    # also keep rect sized to scaled dimensions so other logic / collision works
-                    new_w = max(0, int(self.start_w * new_scale))
-                    new_h = max(0, int(self.start_h * new_scale))
-
-                    cx, cy = self.center
-                    # when size becomes 0 we still want rect centered at same point
-                    if new_w == 0: new_w = 1
-                    if new_h == 0: new_h = 1
-
-                    self.tile.rect.width = new_w
-                    self.tile.rect.height = new_h
-                    self.tile.rect.topleft = (cx - new_w // 2, cy - new_h // 2)
-
-                    if t >= 1.0:
-                        self.finished = True
-                        # reset visual properties to defaults before replacing tile
-                        self.tile.scale = 1.0
-                        self.tile.rotation = 0.0
-                        if self.on_complete:
-                            self.on_complete()
-
-                @property
-                def done(self):
-                    return self.finished
-
-            duration = TWEEN_DEFAULT_RATE
-            shrink_spin_tween = _ShrinkSpinTween(tile, duration, _on_complete, ease_out_quad)
-
-            if self.tween_manager:
-                self.tween_manager.add(shrink_spin_tween)
-            else:
-                # if no tween manager, immediately replace tile
-                _on_complete()
+            shrink_spin_tween = ShrinkSpinTween(tile, TWEEN_DEFAULT_RATE, _on_complete, ease_out_quad)
+            self.tween_manager.add(shrink_spin_tween)
 
         # clear matches immediately; actual removal happens when tweens complete
         self.matches = {}
-
-
-    def create_drop_tween(self, tile, destination):
-        return create_pos_tween(tile, tile.rect.topleft, destination, TWEEN_DEFAULT_RATE, None, ease_out_quad)
-
-
-    def move_tiles_down(self, col, row):
-        # move tiles down in the specified column
-        for r in range(row, 0, -1):
-            self.set_tile(r, col, self.get_tile(r - 1, col))
-            self.get_tile(r, col).row = r
-
-            tweening_tile = self.get_tile(r, col)
-            tween = self.create_drop_tween(tweening_tile, (col * TILE_SIZE, r * TILE_SIZE))
-            self.tween_manager.add(tween)
-
-        # add a new tile at the top of the column
-        new_tile = Tile(col,
-                        0,
-                        self.asset_manager,
-                        random.randint(0, self.difficulty),
-                        random.randint(0, self.difficulty))
-        self.set_tile(0, col, new_tile)
-
-        # set position above the board
-        new_tile.rect.topleft = (col * TILE_SIZE, - TILE_SIZE)
-        tween_top = self.create_drop_tween(new_tile, (col * TILE_SIZE, 0))
-        self.tween_manager.add(tween_top)
-
-
-    def calculate_delta_row(self, tile: Tile):
-        # how many empty spaces are there under this tile?
-        print(f"tile row: {tile.row}")
-        column_below = [t for t in self.tiles if t.col == tile.col]
-        print(f"column below: {column_below}")
-        empty_tiles_below = [t for t in column_below if t.is_empty]
-        print(f"empty tiles below: {empty_tiles_below}")
-
-        return len(empty_tiles_below)
     
 
     def drop_tile(self, tile, delta_rows):
 
         # define the tween
-        old_pos = tile.rect.topleft
         new_pos = (tile.rect.x, tile.rect.y + delta_rows * TILE_SIZE)
-
-        tween = create_pos_tween(
-            tile,
-            old_pos,
-            new_pos,
-            duration=TWEEN_DEFAULT_RATE * delta_rows,
-            on_complete=None,
-            easing=ease_out_quad
-        )
-
-        self.tween_manager.add(tween)
+        self.create_drop_tween(tile, new_pos, TWEEN_DEFAULT_RATE * delta_rows)
 
         # logical move
         tile.row += delta_rows
@@ -308,7 +207,6 @@ class Board:
                 tile.row = target_row
 
 
-
     def create_new_tiles(self, column: int, empty_rows: int):
         # create new tiles to fill the top empty_rows and drop them in
         for row in range(empty_rows):
@@ -320,22 +218,16 @@ class Board:
                             random.randint(0, self.difficulty))
             # position above the board so it can drop in
             new_tile.rect.topleft = (column * TILE_SIZE, - (empty_rows - row) * TILE_SIZE)
-            # set into board
+
+            # place the tile logically into its target slot, then animate it dropping in
             self.set_tile(new_row, column, new_tile)
 
-            # compute drop distance in rows for the new tile: it always travels 'empty_rows'
-            drop_rows = empty_rows
-            duration = TWEEN_DEFAULT_RATE * drop_rows
-
-            # create tween that matches the same per-row speed as other drops
-            tween = create_pos_tween(new_tile,
-                                        new_tile.rect.topleft,
-                                        (column * TILE_SIZE, new_row * TILE_SIZE),
-                                        duration=duration,
-                                        on_complete=None,
-                                        easing=ease_out_quad)
-            self.tween_manager.add(tween)
-
+            # animate the visual drop without altering the logical row
+            self.create_drop_tween(
+                new_tile,
+                (column * TILE_SIZE, new_row * TILE_SIZE), 
+                TWEEN_DEFAULT_RATE * empty_rows
+                )
 
 
     def drop_tiles(self):
@@ -362,11 +254,4 @@ class Board:
             self.create_new_tiles(col, empties)
 
         # check there are no empty tiles remaining
-        empty_tiles = [tile for tile in self.tiles if tile.is_empty]
-        assert(len(empty_tiles) == 0)
-
-
-    def render(self, surface, offset):
-
-        for tile in self.tiles:
-            tile.render(surface, offset)
+        assert(not self.has_empty_tiles())

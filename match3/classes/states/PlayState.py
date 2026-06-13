@@ -36,9 +36,6 @@ class PlayState(BaseState):
 
         self.selected_tile = None
 
-        self.pending_tweening = False
-        self.empty_tiles = False
-
         # countdown in seconds
         self.countdown = DEFAULT_COUNTDOWN_LENGTH
 
@@ -61,9 +58,8 @@ class PlayState(BaseState):
             self.cursor_active = False
 
         # empty tiles
-        elif self.empty_tiles:
+        elif self.board.has_empty_tiles():
             self.board.drop_tiles()
-            self.empty_tiles = False
 
         # matches present
         elif self.board.check_matches():
@@ -71,7 +67,6 @@ class PlayState(BaseState):
             self.score_match()
             self.countdown += 1
             self.board.remove_matches()
-            self.empty_tiles = True
 
         # user may interact
         else:
@@ -115,7 +110,7 @@ class PlayState(BaseState):
 
         # swap tile (select tile next to existing selection)
         elif (abs(self.selected_tile.row - self.cursor_row) + abs(self.selected_tile.col - self.cursor_col)) == 1:
-            self.swap_tiles(self.selected_tile, cursor_tile)
+            self.board.swap_tiles(self.selected_tile, cursor_tile)
             self.selected_tile = None
         
         # other
@@ -160,22 +155,6 @@ class PlayState(BaseState):
                 self.game.score += 50
             elif group_size >= 5:
                 self.game.score += 100
-
-
-    def swap_tiles(self, tile1: Tile, tile2: Tile):
-        row1, col1 = tile1.row, tile1.col
-        tile1.row, tile1.col = tile2.row, tile2.col
-        tile2.row, tile2.col = row1, col1
-
-        # start tweening to new positions
-        tween1 = tile1.start_tween(tile2.rect.topleft)
-        tween2 = tile2.start_tween(tile1.rect.topleft)
-
-        self.game.tween_manager.add(tween1)
-        self.game.tween_manager.add(tween2)
-
-        self.pending_tweening = True
-        self.board.sort_tiles()
 
 
     def move_cursor(self, d_row: int, d_col: int):

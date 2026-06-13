@@ -1,7 +1,7 @@
 import pygame as pg    
 
 from match3.src.settings import TILE_SIZE
-from match3.src.tween import create_pos_tween
+from match3.src.tween import create_pos_tween, TWEEN_DEFAULT_RATE
 
 class Tile:
 
@@ -37,7 +37,7 @@ class Tile:
         return f"Tile(col={self.col}, row={self.row}, colour={self.colour}, variety={self.variety})"
 
 
-    def start_tween(self, target_pos, duration=0.3):
+    def start_tween(self, target_pos, duration=TWEEN_DEFAULT_RATE):
         """
         Create and return a Tween that will animate this tile.rect from its current
         position to target_pos (both in board-space pixels). The caller should add

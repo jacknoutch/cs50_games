@@ -46,6 +46,69 @@ class TweenManager:
 
     def any(self) -> bool:
         return bool(self._tweens)
+    
+
+class ShrinkSpinTween:
+    """
+    This Tween simultaneously spins an object 180 degrees and shrinks it to its center.
+    
+    The object must have attributes "scale" and "rotation.
+
+    """
+    
+    def __init__(self, obj, duration, on_complete, easing):
+        self.obj = obj
+        self.duration = duration
+        self.on_complete = on_complete
+        self.easing = easing
+
+        self.elapsed = 0.0
+        self.start_w = obj.rect.width
+        self.start_h = obj.rect.height
+
+        # ensure obj has scale/rotation properties used by obj.render
+        assert(hasattr(obj, "scale"))
+        assert(hasattr(obj, "rotation"))
+        
+        self.center = obj.rect.center
+        self.finished = False
+
+    def update(self, dt):
+        if self.finished:
+            return
+
+        self.elapsed += dt
+        t = min(1.0, self.elapsed / self.duration)
+        eased = self.easing(t)
+
+        # scale goes from 1.0 -> 0.0, rotation from 0 -> 360
+        new_scale = max(0.0, 1.0 - eased)
+        new_rotation = eased * 180.0
+
+        # apply to obj (obj.render should respect these)
+        self.obj.scale = new_scale
+        self.obj.rotation = new_rotation
+
+        # also keep rect sized to scaled dimensions so other logic / collision works
+        new_w = max(0, int(self.start_w * new_scale))
+        new_h = max(0, int(self.start_h * new_scale))
+
+        cx, cy = self.center
+        # when size becomes 0 we still want rect centered at same point
+        if new_w == 0: new_w = 1
+        if new_h == 0: new_h = 1
+
+        self.obj.rect.width = new_w
+        self.obj.rect.height = new_h
+        self.obj.rect.topleft = (cx - new_w // 2, cy - new_h // 2)
+
+        if t >= 1.0:
+            self.finished = True
+            # reset visual properties to defaults before replacing obj
+            self.obj.scale = 1.0
+            self.obj.rotation = 0.0
+            if self.on_complete:
+                self.on_complete()
 
 
 # helper to make a position tween for an object with a rect.topleft
