@@ -146,7 +146,7 @@ class Board:
 
 
     def create_drop_tween(self, tile, destination):
-        return create_pos_tween(tile, tile.rect.topleft, destination, 0.3, None, ease_out_quad)
+        return create_pos_tween(tile, tile.rect.topleft, destination, 0.3, None)
 
 
     def move_tiles_down(self, col, row):

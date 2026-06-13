@@ -60,6 +60,7 @@ class Game:
         self.background_loop_point = 416
 
         self.difficulty = DEFAULT_DIFFICULTY
+        self.score = None
         
         self.running = True
 

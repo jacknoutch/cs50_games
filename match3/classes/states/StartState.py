@@ -85,6 +85,11 @@ class StartState(BaseState):
         self.render_menu(surface, font)
         self.render_tiles(surface)
 
+        if self.game.score is not None and type(self.game.score) == int:
+            score_text = f"Score: {self.game.score}"
+            score_surf = font.render(score_text, False, (255, 255, 255))
+            surface.blit(score_surf, (VIRTUAL_WIDTH - MARGIN - score_surf.get_width(), MARGIN))
+
 
     def render_title(self, surface, font):
 

@@ -23,6 +23,8 @@ class PlayState(BaseState):
         if self.game.debug:
             print("Entered state: " + self.__class__.__name__)
         
+        self.game.score = 0
+
         self.board = Board(0, 0,
                            self.game.asset_manager,
                            self.game.difficulty,
@@ -37,7 +39,6 @@ class PlayState(BaseState):
         self.pending_tweening = False
         self.empty_tiles = False
 
-        self.score = 0
         # countdown in seconds
         self.countdown = DEFAULT_COUNTDOWN_LENGTH
 
@@ -157,11 +158,11 @@ class PlayState(BaseState):
 
             # award points based on group size
             if group_size == 3:
-                self.score += 30
+                self.game.score += 30
             elif group_size == 4:
-                self.score += 50
+                self.game.score += 50
             elif group_size >= 5:
-                self.score += 100
+                self.game.score += 100
 
 
     def swap_tiles(self, tile1: Tile, tile2: Tile):
@@ -201,7 +202,7 @@ class PlayState(BaseState):
 
         # draw score on left side
         font = self.game.asset_manager.get_font("font", 24)
-        score_surf = font.render(f"Score: {self.score}", False, (255, 255, 255))
+        score_surf = font.render(f"Score: {self.game.score}", False, (255, 255, 255))
         surface.blit(score_surf, (MARGIN, MARGIN))
 
         # render countdown below the score
