@@ -1,5 +1,7 @@
 from typing import Callable, Optional, List
 
+TWEEN_DEFAULT_RATE = 0.3
+
 def linear(t: float) -> float:
     return t
 

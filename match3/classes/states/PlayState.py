@@ -57,16 +57,13 @@ class PlayState(BaseState):
             return
 
         # tweening
-        if self.pending_tweening:
+        if self.game.tween_manager.any():
             self.cursor_active = False
-
-            if not self.game.tween_manager.any():
-                self.pending_tweening = False
 
         # empty tiles
         elif self.empty_tiles:
-            self.empty_tiles = self.board.replace_empty_tiles()
-            self.pending_tweening = True
+            self.board.drop_tiles()
+            self.empty_tiles = False
 
         # matches present
         elif self.board.check_matches():
@@ -101,7 +98,7 @@ class PlayState(BaseState):
                     self.move_cursor(0, 1)
 
                 if event.key == pg.K_RETURN:
-                    if not self.pending_tweening:
+                    if not self.game.tween_manager.any():
                         self.handle_selection()
 
     
