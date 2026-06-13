@@ -19,5 +19,5 @@ class COLOURS:
 
 
 class TILES:
-    SKY = 0
-    GROUND = 1
+    SKY = 1
+    GROUND = 0

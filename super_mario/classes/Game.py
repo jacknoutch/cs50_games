@@ -18,7 +18,8 @@ class Game:
         pg.display.set_caption("Super Mario Bros")
 
         
-        self.debug = True
+        self.debug = False
+        self.font = pg.font.Font(None, 12)
 
 
         self.events = None
@@ -31,13 +32,21 @@ class Game:
         self.clock = pg.time.Clock()
         self.dt = 0
 
+
+        # ASSETS
+
         BASE_DIR = "super_mario/assets/"
         tiles_path = BASE_DIR + "tiles.png"
-
         self.tile_surface = pg.image.load(tiles_path).convert_alpha()
+
+
+        # BACKGROUND
 
         self.background = pg.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
         self.background.fill(COLOURS.SKY_BLUE)
+
+
+        # TILEMAP
 
         self.map_tile_width = VIRTUAL_WIDTH // TILE_WIDTH
         self.map_tile_height = VIRTUAL_HEIGHT // TILE_HEIGHT
@@ -45,6 +54,13 @@ class Game:
         self.tilemap = []
 
         self.initialise_map()
+
+
+        # CAMERA
+
+        self.camera_x = 0.0
+        self.camera_speed = 200.0
+
         
         self.running = True
 
@@ -75,13 +91,18 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
 
+            if event.type == pg.KEYDOWN:
                 if event.key == pg.K_d:
                     self.debug = not self.debug
 
 
     def update(self):
 
-        pass
+        if self.keys_pressed:
+            if self.keys_pressed[pg.K_LEFT]:
+                self.camera_x -= self.camera_speed * self.dt
+            if self.keys_pressed[pg.K_RIGHT]:
+                self.camera_x += self.camera_speed * self.dt
 
 
     def render(self):
@@ -105,17 +126,32 @@ class Game:
             self.tilemap.append(TILES.SKY if i < self.map_tile_width * 5 else TILES.GROUND)
 
 
+
     def render_map(self, surface):
-        # number of tiles per row in the tileset image
+        tileset_cols = self.tile_surface.get_width() // TILE_WIDTH
+
         for i, tile in enumerate(self.tilemap):
-            if tile == TILES.SKY:
+            col = i % self.map_tile_width
+            row = i // self.map_tile_width
+
+            dest_x = int(col * TILE_WIDTH - self.camera_x)
+            dest_y = row * TILE_HEIGHT
+
+            if dest_x + TILE_WIDTH < 0 or dest_x > VIRTUAL_WIDTH:
                 continue
 
-            # destination position on the map (map index -> x,y)
-            dest_x = (i % self.map_tile_width) * TILE_WIDTH
-            dest_y = (i // self.map_tile_width) * TILE_HEIGHT
+            if tile != TILES.SKY:
+                src_x = (tile % tileset_cols) * TILE_WIDTH
+                src_y = (tile // tileset_cols) * TILE_HEIGHT
+                surface.blit(
+                    self.tile_surface,
+                    (dest_x, dest_y),
+                    area=pg.Rect(src_x, src_y, TILE_WIDTH, TILE_HEIGHT),
+                )
 
-            surface.blit(
-                self.tile_surface,
-                (dest_x, dest_y),
-            )
+
+            # print the coordinates on the screen for debug'
+            if self.debug:
+                coord_text = f"{col},{row}"
+                text_surf = self.font.render(coord_text, True, (0, 0, 0))
+                surface.blit(text_surf, (dest_x + 2, dest_y + 2))
