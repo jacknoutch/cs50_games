@@ -1,14 +1,17 @@
 import random
 
 from match3.classes.Tile import Tile
-from match3.src.settings import BOARD_SIZE
+from match3.src.settings import BOARD_SIZE, TILE_SIZE
+from match3.src.tween import create_pos_tween,ease_out_quad
 
 class Board:
-    def __init__(self, x, y, asset_manager, difficulty):
-        self.asset_manager = asset_manager
+    def __init__(self, x, y, asset_manager, difficulty, tween_manager=None):
         self.x = x
         self.y = y
+
+        self.asset_manager = asset_manager
         self.difficulty = difficulty
+        self.tween_manager = tween_manager
 
         self.rows = BOARD_SIZE
         self.cols = BOARD_SIZE
@@ -80,7 +83,7 @@ class Board:
         """
         empty_tiles = False
         for col in range(self.cols):
-            for row in range(self.rows-1):
+            for row in range(self.rows):
                 if self.get_tile(row, col).is_empty:
                     empty_tiles = True
                     break
@@ -93,13 +96,13 @@ class Board:
         Fills any empty tiles with a random Tile.
         """
         for col in range(self.cols):
-            for row in range(self.rows-1):
+            for row in range(self.rows):
                 if self.get_tile(row, col).is_empty:
                     self.set_tile(
                         row,
                         col,
-                        Tile(row,
-                             col,
+                        Tile(col,
+                             row,
                              self.asset_manager,
                              random.randint(0, self.difficulty),
                              random.randint(0, self.difficulty)
@@ -142,19 +145,33 @@ class Board:
         self.matches = {}
 
 
+    def create_drop_tween(self, tile, destination):
+        return create_pos_tween(tile, tile.rect.topleft, destination, 0.3, None, ease_out_quad)
+
+
     def move_tiles_down(self, col, row):
         # move tiles down in the specified column
         for r in range(row, 0, -1):
             self.set_tile(r, col, self.get_tile(r - 1, col))
             self.get_tile(r, col).row = r
-            self.get_tile(r, col).start_tween((col * 32, r * 32))
+
+            tweening_tile = self.get_tile(r, col)
+            tween = self.create_drop_tween(tweening_tile, (col * TILE_SIZE, r * TILE_SIZE))
+            self.tween_manager.add(tween)
 
         # add a new tile at the top of the column
-        self.set_tile(0, col, Tile(col, 0, self.asset_manager, random.randint(0, self.difficulty), random.randint(0, self.difficulty)))
-        self.get_tile(0, col).rect.topleft = (col * 32, -32) # set position above the board
-        self.get_tile(0, col).start_tween((col * 32, 0))
+        new_tile = Tile(col,
+                        0,
+                        self.asset_manager,
+                        random.randint(0, self.difficulty),
+                        random.randint(0, self.difficulty))
+        self.set_tile(0, col, new_tile)
 
-        pass
+        # set position above the board
+        new_tile.rect.topleft = (col * TILE_SIZE, - TILE_SIZE)
+        tween_top = self.create_drop_tween(new_tile, (col * TILE_SIZE, 0))
+        self.tween_manager.add(tween_top)
+
 
     def replace_empty_tiles(self) -> bool:
         """

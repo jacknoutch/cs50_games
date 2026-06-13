@@ -4,6 +4,7 @@ import random
 from match3.assets.AssetManager import TILE_COLUMN_COUNT, TILE_ROW_COUNT, TILE_SIZE
 from match3.classes.states.BaseState import BaseState
 from match3.src.settings import BOARD_OFFSET, MARGIN, VIRTUAL_HEIGHT, VIRTUAL_WIDTH
+from match3.src.tween import Tween, ease_out_quad
 
 class StartState(BaseState):
 
@@ -33,14 +34,12 @@ class StartState(BaseState):
         self.selected_option = 0
 
         # menu_background
-        self.menu_background_surf = pg.Surface((VIRTUAL_WIDTH - MARGIN * 2, VIRTUAL_HEIGHT - MARGIN * 4), pg.SRCALPHA)
+        self.menu_background_surf = pg.Surface((VIRTUAL_WIDTH - MARGIN * 2, VIRTUAL_HEIGHT - MARGIN * 6), pg.SRCALPHA)
         self.menu_background_surf.fill((0, 0, 0, 127))
 
         # tween to other states
-        self.tweening = False
-        self.tween_targe = None
-        self.tween_duration = 0.5 # seconds
-        self.tween_elapsed = 0.0
+        self.fade_duration = 0.5 # seconds
+        self.overlay_alpha = 0.0
 
 
     def enter(self):
@@ -76,13 +75,6 @@ class StartState(BaseState):
 
             if event.type == self.title_flash:
                 self.current_colour = (self.current_colour + 1) % len(self.colours)
-
-
-        if self.tweening:
-            self.tween_elapsed += dt
-            if self.tween_elapsed >= self.tween_duration:
-                self.tweening = False
-                self.state_machine.change_state(self.tween_target)
 
 
     def render(self, surface):
@@ -127,10 +119,19 @@ class StartState(BaseState):
         option = self.menu_options[self.selected_option]
         if option == "Start Game":
             print("Start Game selected")
-            self.tweening = True
-            self.tween_elapsed = 0.0
-            self.tween_target = "play"
-            # self.state_machine.change_state("play")
+
+            def update_fn(t):
+                self.overlay_alpha = int(255 * t)
+
+            def on_complete():
+                self.overlay_alpha = 255
+                self.state_machine.change_state("play")
+                self.overlay_alpha = 0
+
+
+            tween = Tween(self.fade_duration, update_fn, on_complete=on_complete, easing=ease_out_quad)
+            self.game.tween_manager.add(tween)
+
         elif option == "Options":
             print("Options selected")
             # self.state_machine.change_state("options")  # TODO: implement OptionsState
@@ -144,8 +145,7 @@ class StartState(BaseState):
         for i, tile in enumerate(self.tiles):
             surface.blit(tile, (x + i % 8 * TILE_SIZE, y + i // 8 * TILE_SIZE))
 
-        if self.tweening:
-            alpha = int(255 * min(1.0, self.tween_elapsed / self.tween_duration))
+        if self.overlay_alpha > 0:
             overlay = pg.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT), pg.SRCALPHA)
-            overlay.fill((0, 0, 0, alpha))
+            overlay.fill((0, 0, 0, self.overlay_alpha))
             surface.blit(overlay, (0, 0))

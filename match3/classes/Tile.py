@@ -1,7 +1,7 @@
 import pygame as pg    
 
 from match3.src.settings import TILE_SIZE
-
+from match3.src.tween import create_pos_tween
 
 class Tile:
 
@@ -28,40 +28,34 @@ class Tile:
         self.variety = variety
 
         # tweening properties
-        self.tweening = False
-        self.tween_elapsed_time = 0
-        self.tween_duration = 0.3 #s
-        self.tween_start_pos = (0, 0)
-        self.tween_target_pos = (0, 0)
+        self._is_tweening = False
 
 
     def __repr__(self):
         return f"Tile(col={self.col}, row={self.row}, colour={self.colour}, variety={self.variety})"
 
 
-    def start_tween(self, target_pos):
-        self.tweening = True
-        self.tween_elapsed_time = 0
-        self.tween_start_pos = self.rect.topleft
-        self.tween_target_pos = target_pos
+    def start_tween(self, target_pos, duration=0.3):
+        """
+        Create and return a Tween that will animate this tile.rect from its current
+        position to target_pos (both in board-space pixels). The caller should add
+        the returned Tween to the global TweenManager.
+        """
+        self._is_tweening = True
+
+        def on_complete():
+            # mark not tweening and snap rect to final position
+            self._is_tweening = False
+            self.rect.topleft = (int(target_pos[0]), int(target_pos[1]))
+
+        tween = create_pos_tween(self, self.rect.topleft, target_pos, duration=duration, on_complete=on_complete)
+        return tween
 
 
     def update(self, dt):
-        self.rect.topleft = (self.col * TILE_SIZE, self.row * TILE_SIZE)
 
-        if not self.tweening:
-            return
-        
-        self.tween_elapsed_time += dt
-        if self.tween_elapsed_time >= self.tween_duration:
-            self.tweening = False
-            self.rect.topleft = self.tween_target_pos
-        else:
-            t = self.tween_elapsed_time / self.tween_duration
-            new_x = self.tween_start_pos[0] + (self.tween_target_pos[0] - self.tween_start_pos[0]) * t
-            new_y = self.tween_start_pos[1] + (self.tween_target_pos[1] - self.tween_start_pos[1]) * t
-            self.rect.topleft = (new_x, new_y)
-
+        if not self._is_tweening:
+            self.rect.topleft = (self.col * TILE_SIZE, self.row * TILE_SIZE)
 
 
     def render(self, surface, offset):

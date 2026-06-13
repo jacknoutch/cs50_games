@@ -6,7 +6,9 @@ from match3.classes.states.StartState import StartState
 from match3.assets.AssetManager import AssetManager
 from match3.classes.StateMachine import StateMachine
 from match3.src.settings import DEFAULT_DIFFICULTY, FPS, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
+from match3.src.tween import TweenManager
 from match3.src.utils import compute_letterbox, display_fps, debug
+
 
 class Game:
 
@@ -25,6 +27,10 @@ class Game:
 
         self.asset_manager = AssetManager()
         self.asset_manager.load_assets()
+
+        # TWEEN MANAGER
+
+        self.tween_manager = TweenManager()
 
         # DEBUG
 
@@ -92,6 +98,9 @@ class Game:
     def update(self):
         
         self.state_machine.update(self.dt)
+
+        self.tween_manager.update(self.dt)
+
         self.background_x = (self.background_x - self.background_scroll_speed * self.dt)
         if self.background_x <= -self.background_loop_point:
             self.background_x = 0

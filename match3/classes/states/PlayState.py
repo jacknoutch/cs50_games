@@ -23,7 +23,10 @@ class PlayState(BaseState):
         if self.game.debug:
             print("Entered state: " + self.__class__.__name__)
         
-        self.board = Board(0, 0, self.game.asset_manager, self.game.difficulty)
+        self.board = Board(0, 0,
+                           self.game.asset_manager,
+                           self.game.difficulty,
+                           self.game.tween_manager)
 
         self.cursor_active = True
         self.cursor_row = 0
@@ -52,15 +55,11 @@ class PlayState(BaseState):
             self.game.state_machine.change_state("start")
             return
 
-
         # tweening
         if self.pending_tweening:
             self.cursor_active = False
 
-            tweening_tiles = [tile for tile in self.board.tiles if tile.tweening]
-
-            if not tweening_tiles:
-                # tweening has finished
+            if not self.game.tween_manager.any():
                 self.pending_tweening = False
 
         # empty tiles
@@ -171,8 +170,11 @@ class PlayState(BaseState):
         tile2.row, tile2.col = row1, col1
 
         # start tweening to new positions
-        tile1.start_tween((tile2.rect.topleft))
-        tile2.start_tween((tile1.rect.topleft))
+        tween1 = tile1.start_tween(tile2.rect.topleft)
+        tween2 = tile2.start_tween(tile1.rect.topleft)
+
+        self.game.tween_manager.add(tween1)
+        self.game.tween_manager.add(tween2)
 
         self.pending_tweening = True
         self.board.sort_tiles()
