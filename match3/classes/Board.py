@@ -2,13 +2,13 @@ import random
 
 from match3.classes.Tile import Tile
 from match3.src.settings import BOARD_SIZE
-from match3.src.utils import debug
 
 class Board:
-    def __init__(self, x, y, asset_manager):
+    def __init__(self, x, y, asset_manager, difficulty):
         self.asset_manager = asset_manager
         self.x = x
         self.y = y
+        self.difficulty = difficulty
 
         self.rows = BOARD_SIZE
         self.cols = BOARD_SIZE
@@ -23,8 +23,8 @@ class Board:
         for row in range(self.rows):
             for col in range(self.cols):
                 # pick a colour and variety but avoid creating any immediate 3-in-a-row
-                colour = random.randint(0, 5)
-                variety = random.randint(0, 5)
+                colour = random.randint(0, self.difficulty)
+                variety = random.randint(0, self.difficulty)
 
                 # while placing this tile would create a horizontal or vertical match,
                 # pick a different colour/variety and try again
@@ -49,13 +49,11 @@ class Board:
                         break
 
                     # re-roll colour/variety and test again
-                    colour = random.randint(0, 5)
-                    variety = random.randint(0, 5)
+                    colour = random.randint(0, self.difficulty)
+                    variety = random.randint(0, self.difficulty)
 
                 new_tile = Tile(col, row, self.asset_manager, colour, variety)
                 self.tiles.append(new_tile)
-
-        
 
 
     def update(self, dt):
@@ -103,8 +101,8 @@ class Board:
                         Tile(row,
                              col,
                              self.asset_manager,
-                             random.randint(0, 5),
-                             random.randint(0, 5)
+                             random.randint(0, self.difficulty),
+                             random.randint(0, self.difficulty)
                         )
                     )
 
@@ -152,7 +150,7 @@ class Board:
             self.get_tile(r, col).start_tween((col * 32, r * 32))
 
         # add a new tile at the top of the column
-        self.set_tile(0, col, Tile(col, 0, self.asset_manager, random.randint(0, 5), random.randint(0, 5)))
+        self.set_tile(0, col, Tile(col, 0, self.asset_manager, random.randint(0, self.difficulty), random.randint(0, self.difficulty)))
         self.get_tile(0, col).rect.topleft = (col * 32, -32) # set position above the board
         self.get_tile(0, col).start_tween((col * 32, 0))
 

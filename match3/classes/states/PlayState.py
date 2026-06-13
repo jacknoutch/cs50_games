@@ -3,12 +3,19 @@ import pygame as pg
 from match3.classes.Board import Board
 from match3.classes.Tile import Tile
 from match3.classes.states.BaseState import BaseState
-from match3.src.settings import BOARD_OFFSET, TILE_SIZE, MARGIN
+from match3.src.settings import BOARD_OFFSET, DEFAULT_COUNTDOWN_LENGTH, TILE_SIZE, MARGIN, VIRTUAL_HEIGHT
 
 class PlayState(BaseState):
 
     def __init__(self):
         super().__init__()
+
+        # left side background (similar to StartState menu_background)
+        # covers the left side of the screen where score and timer are displayed
+        left_panel_width = BOARD_OFFSET[0] - MARGIN * 2
+        left_panel_height = VIRTUAL_HEIGHT - MARGIN * 2
+        self.left_background_surf = pg.Surface((left_panel_width, left_panel_height - MARGIN * 4), pg.SRCALPHA)
+        self.left_background_surf.fill((0, 0, 0, 127))
 
 
     def enter(self):
@@ -16,7 +23,7 @@ class PlayState(BaseState):
         if self.game.debug:
             print("Entered state: " + self.__class__.__name__)
         
-        self.board = Board(0, 0, self.game.asset_manager)
+        self.board = Board(0, 0, self.game.asset_manager, self.game.difficulty)
 
         self.cursor_active = True
         self.cursor_row = 0
@@ -29,7 +36,7 @@ class PlayState(BaseState):
 
         self.score = 0
         # countdown in seconds
-        self.countdown = 60.0
+        self.countdown = DEFAULT_COUNTDOWN_LENGTH
 
 
     def update(self, dt):
@@ -184,6 +191,9 @@ class PlayState(BaseState):
 
 
     def render(self, surface):
+        # draw semi-transparent background on left side
+        surface.blit(self.left_background_surf, (MARGIN, MARGIN))
+
         # draw board
         self.board.render(surface, BOARD_OFFSET)
 
@@ -210,4 +220,8 @@ class PlayState(BaseState):
         if self.selected_tile is not None:
             pg.draw.rect(surface,
                          (255, 255, 0),
-                         (BOARD_OFFSET[0] + self.selected_tile.col * TILE_SIZE + 4, BOARD_OFFSET[1] + self.selected_tile.row * TILE_SIZE + 4, TILE_SIZE - 8, TILE_SIZE - 8), 2)
+                         (BOARD_OFFSET[0] + self.selected_tile.col * TILE_SIZE + 4,
+                          BOARD_OFFSET[1] + self.selected_tile.row * TILE_SIZE + 4,
+                          TILE_SIZE - 8,
+                          TILE_SIZE - 8),
+                          2)
