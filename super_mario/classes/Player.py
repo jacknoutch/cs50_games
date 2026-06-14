@@ -1,5 +1,6 @@
 import pygame as pg
 
+from super_mario.classes.Animation import Animation
 from super_mario.src.settings import TILE_SIZE
 
 class Player:
@@ -21,6 +22,13 @@ class Player:
             self.frames.append(frame)
 
         self.current_frame = 0
+
+        self.idle_animation = Animation(self.frames[0], interval=1)
+        self.moving_animation = Animation(self.frames[10, 11], interval=0.2)
+
+        self.current_animation = self.idle_animation
+
+        
 
         self.rect = self.get_surf().get_rect()
         self.x = self.rect.x
