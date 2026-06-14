@@ -38,6 +38,7 @@ class Game:
 
         BASE_DIR = "super_mario/assets/"
         tiles_path = BASE_DIR + "tiles.png"
+        
         self.tile_surface = pg.image.load(tiles_path).convert_alpha()
 
 
@@ -59,8 +60,7 @@ class Game:
 
         # CAMERA
 
-        self.camera_x = 0.0
-        self.camera_speed = 160.0
+        self.camera_target = 0
 
 
         # IN GAME OBJECTS
@@ -115,11 +115,12 @@ class Game:
             if self.keys_pressed[pg.K_SPACE] and self.player.dy == 0:
                 self.player.jump()
 
+            if self.keys_pressed[pg.K_ESCAPE]:
+                self.running = False
+
         self.player.update(self.dt)
 
-
-        # Center camera on player
-        # self.camera_x = self.player.frect.x - VIRTUAL_WIDTH / 2 + self.player.tile_width / 2
+        self.camera_target = self.player.frect.centerx - VIRTUAL_WIDTH / 2
 
 
     def render(self):
@@ -129,7 +130,9 @@ class Game:
 
         self.render_map(self.game_surface)
 
-        self.player.render(self.game_surface)
+        # self.player.render(self.game_surface)
+        player_pos = self.offset_camera(self.player.frect)
+        self.game_surface.blit(self.player.get_surf(), player_pos)
 
         # scale the virtual surface to the window size and blit to the display
         scaled = pg.transform.scale(self.game_surface, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -153,7 +156,7 @@ class Game:
             col = i % self.map_tile_width
             row = i // self.map_tile_width
 
-            dest_x = int(col * TILE_SIZE - self.camera_x)
+            dest_x = int(col * TILE_SIZE - self.camera_target)
             dest_y = row * TILE_SIZE
 
             if dest_x + TILE_SIZE < 0 or dest_x > VIRTUAL_WIDTH:
@@ -174,3 +177,7 @@ class Game:
                 coord_text = f"{col},{row}"
                 text_surf = self.font.render(coord_text, True, (0, 0, 0))
                 surface.blit(text_surf, (dest_x + 2, dest_y + 2))
+
+    
+    def offset_camera(self, pos):
+        return (int(pos.x - self.camera_target), int(pos.y))

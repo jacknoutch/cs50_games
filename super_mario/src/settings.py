@@ -11,6 +11,10 @@ FPS = 60
 
 TILE_SIZE = 16
 
+# number of tiles in each tile set
+TILE_SET_WIDTH = 5
+TILE_SET_HEIGHT = 4
+
 
 class COLOURS:
     SKY_BLUE = (107, 140, 255)
@@ -18,8 +22,8 @@ class COLOURS:
 
 
 class TILES:
-    SKY = 1
-    GROUND = 0
+    SKY = 4
+    GROUND = 2
 
 
 GRAVITY = 900
