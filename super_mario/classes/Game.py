@@ -112,9 +112,14 @@ class Game:
             if self.keys_pressed[pg.K_RIGHT]:
                 self.player.move(self.dt)
 
+            if self.keys_pressed[pg.K_SPACE] and self.player.dy == 0:
+                self.player.jump()
+
+        self.player.update(self.dt)
+
 
         # Center camera on player
-        self.camera_x = self.player.rect.x - VIRTUAL_WIDTH / 2 + self.player.tile_width / 2
+        # self.camera_x = self.player.frect.x - VIRTUAL_WIDTH / 2 + self.player.tile_width / 2
 
 
     def render(self):

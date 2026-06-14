@@ -20,3 +20,7 @@ class COLOURS:
 class TILES:
     SKY = 1
     GROUND = 0
+
+
+GRAVITY = 900
+JUMP_VELOCITY = -300

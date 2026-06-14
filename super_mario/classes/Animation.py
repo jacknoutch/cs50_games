@@ -8,7 +8,7 @@ class Animation:
 
         self.frames = frames
         self.interval = interval
-        self.timer = 0
+        self.timer = 0.0
         self.current_frame = 0
 
 
@@ -23,7 +23,7 @@ class Animation:
         if self.timer > self.interval:
             self.timer = self.timer % self.interval
 
-            self.current_frame = math.max(1, (self.current_frame + 1) % (len(self.frames + 1)))
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
 
     
     def get_current_frame(self):
