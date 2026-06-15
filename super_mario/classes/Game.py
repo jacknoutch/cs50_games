@@ -2,7 +2,7 @@ import os
 import pygame as pg
 
 from super_mario.classes.Player import Player
-from super_mario.src.settings import COLOURS, TILES, FPS, TILE_SIZE, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
+from super_mario.src.settings import COLOURS, TILES, FPS, TILE_SET_HEIGHT, TILE_SET_WIDTH, TILE_SIZE, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
 
 
 class Game:
@@ -40,6 +40,7 @@ class Game:
         tiles_path = BASE_DIR + "tiles.png"
         
         self.tile_surface = pg.image.load(tiles_path).convert_alpha()
+        self.tileset = self.load_tileset()
 
 
         # BACKGROUND
@@ -142,16 +143,25 @@ class Game:
 
 #--------------------------
 
+    def load_tileset(self):
+
+        tileset = {}
+        
+        for i in range(TILE_SET_HEIGHT * TILE_SET_WIDTH):
+            x = i % TILE_SET_WIDTH * TILE_SIZE
+            y = i // TILE_SET_WIDTH * TILE_SIZE
+            tileset[i] = self.tile_surface.subsurface((x,y), (TILE_SIZE, TILE_SIZE))
+
+        return tileset
+
+
     def initialise_map(self):
 
         for i in range(self.map_tile_width * self.map_tile_height):
             self.tilemap.append(TILES.SKY if i < self.map_tile_width * 5 else TILES.GROUND)
 
 
-
     def render_map(self, surface):
-        tileset_cols = self.tile_surface.get_width() // TILE_SIZE
-
         for i, tile in enumerate(self.tilemap):
             col = i % self.map_tile_width
             row = i // self.map_tile_width
@@ -162,14 +172,11 @@ class Game:
             if dest_x + TILE_SIZE < 0 or dest_x > VIRTUAL_WIDTH:
                 continue
 
-            if tile != TILES.SKY:
-                src_x = (tile % tileset_cols) * TILE_SIZE
-                src_y = (tile // tileset_cols) * TILE_SIZE
-                surface.blit(
-                    self.tile_surface,
-                    (dest_x, dest_y),
-                    area=pg.Rect(src_x, src_y, TILE_SIZE, TILE_SIZE),
-                )
+            surface.blit(
+                self.tileset[tile],
+                (dest_x, dest_y)
+            )
+
 
 
             # print the coordinates on the screen for debug'
