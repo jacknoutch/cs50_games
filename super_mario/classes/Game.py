@@ -1,7 +1,8 @@
-import os
+import os, random
 import pygame as pg
 
 from super_mario.classes.Player import Player
+from super_mario.classes.Tile import Tile
 from super_mario.src.settings import COLOURS, TILES, FPS, TILE_SET_HEIGHT, TILE_SET_WIDTH, TILE_SIZE, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
 
 
@@ -38,9 +39,13 @@ class Game:
 
         BASE_DIR = "super_mario/assets/"
         tiles_path = BASE_DIR + "tiles.png"
-        
+        toppers_path = BASE_DIR + "tile_tops.png"
+
         self.tile_surface = pg.image.load(tiles_path).convert_alpha()
-        self.tileset = self.load_tileset()
+        self.tileset = self.load_tileset(self.tile_surface, TILE_SET_WIDTH, TILE_SET_HEIGHT)
+
+        self.toppers_surface = pg.image.load(toppers_path).convert_alpha()
+        self.toppers = self.load_tileset(self.toppers_surface, TILE_SET_WIDTH, TILE_SET_HEIGHT)
 
 
         # BACKGROUND
@@ -143,14 +148,19 @@ class Game:
 
 #--------------------------
 
-    def load_tileset(self):
+    def load_tileset(self, tileset_surface, tiles_width: int, tiles_height: int) -> dict:
 
         tileset = {}
+
+        # choose a random tileset theme
+        tileset_choice = random.randint(0, 59)
+        tileset_offset_x = (tileset_choice % 6) * tiles_width * TILE_SIZE
+        tileset_offset_y = (tileset_choice // 6) * tiles_height * TILE_SIZE
         
-        for i in range(TILE_SET_HEIGHT * TILE_SET_WIDTH):
-            x = i % TILE_SET_WIDTH * TILE_SIZE
-            y = i // TILE_SET_WIDTH * TILE_SIZE
-            tileset[i] = self.tile_surface.subsurface((x,y), (TILE_SIZE, TILE_SIZE))
+        for i in range(tiles_height * tiles_width):
+            x = i % tiles_width * TILE_SIZE + tileset_offset_x
+            y = i // tiles_width * TILE_SIZE + tileset_offset_y
+            tileset[i] = tileset_surface.subsurface((x,y), (TILE_SIZE, TILE_SIZE))
 
         return tileset
 
@@ -158,7 +168,11 @@ class Game:
     def initialise_map(self):
 
         for i in range(self.map_tile_width * self.map_tile_height):
-            self.tilemap.append(TILES.SKY if i < self.map_tile_width * 5 else TILES.GROUND)
+
+            tile_id = TILES.SKY if i < self.map_tile_width * 5 else TILES.GROUND
+            tile_topper = i // self.map_tile_width == 5
+            new_tile = Tile(tile_id, tile_topper)
+            self.tilemap.append(new_tile)
 
 
     def render_map(self, surface):
@@ -173,10 +187,12 @@ class Game:
                 continue
 
             surface.blit(
-                self.tileset[tile],
+                self.tileset[tile.id],
                 (dest_x, dest_y)
             )
 
+            if tile.topper:
+                surface.blit(self.toppers[tile.id], (dest_x, dest_y))
 
 
             # print the coordinates on the screen for debug'
