@@ -59,9 +59,7 @@ class Game:
         self.map_tile_width = VIRTUAL_WIDTH // TILE_SIZE
         self.map_tile_height = VIRTUAL_HEIGHT // TILE_SIZE
 
-        self.tilemap = []
-
-        self.initialise_map()
+        self.tilemap = self.initialise_map()
 
 
         # CAMERA
@@ -167,13 +165,29 @@ class Game:
 
     def initialise_map(self):
 
+        tilemap = []
+
+        # fill the map with sky
         for i in range(self.map_tile_width * self.map_tile_height):
+            tilemap.append(Tile(TILES.SKY, False))
 
-            tile_id = TILES.SKY if i < self.map_tile_width * 5 else TILES.GROUND
-            tile_topper = i // self.map_tile_width == 5
-            new_tile = Tile(tile_id, tile_topper)
-            self.tilemap.append(new_tile)
 
+        for x in range(self.map_tile_width):
+
+            pillar_spawn = random.random() * 5 < 1 # 1/5 chance
+
+            for y in range(self.map_tile_height):
+
+                tilemap_position = y * self.map_tile_width + x
+
+
+                if pillar_spawn and y >= 3:
+                    tilemap[tilemap_position] = Tile(TILES.GROUND, y == 3)
+
+                elif y >= 5:
+                    tilemap[tilemap_position] = Tile(TILES.GROUND, y == 5)
+
+        return tilemap
 
     def render_map(self, surface):
         for i, tile in enumerate(self.tilemap):
