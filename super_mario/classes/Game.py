@@ -176,6 +176,11 @@ class Game:
 
             pillar_spawn = random.random() * 5 < 1 # 1/5 chance
 
+            chasm_spawn = random.random() * 7 < 1 # 1/7 chance
+
+            if chasm_spawn:
+                continue
+
             for y in range(self.map_tile_height):
 
                 tilemap_position = y * self.map_tile_width + x
